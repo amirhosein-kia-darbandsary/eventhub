@@ -21,7 +21,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.db.base import Base
-from app.models import user, venue, event, ticket_type 
+from app.models import user, venue, event, ticket_type, reserve, webhook
 
 target_metadata = Base.metadata
 
