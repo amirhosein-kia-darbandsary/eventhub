@@ -6,7 +6,7 @@ from functools import lru_cache
 class PostgresSettings(BaseModel):
     user: str
     password: str
-    db: str
+    name: str
     port: str
     host: str
 
@@ -18,10 +18,11 @@ class PostgresSettings(BaseModel):
 class RedisSettings(BaseModel):
     host: str
     port: str
+    name: str
 
     @property
     def url(self) -> str:
-        return f"redis://{self.host}:{self.port}/{self.db}"
+        return f"redis://{self.host}:{self.port}/{self.name}"
 
 
 class Settings(BaseSettings):
