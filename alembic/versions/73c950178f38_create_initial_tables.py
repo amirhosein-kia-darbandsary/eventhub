@@ -55,7 +55,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
     sa.Column('price_cents', sa.Integer(), nullable=False),
-    sa.Column('totatl_quantity', sa.Integer(), nullable=False),
+    sa.Column('total_quantity', sa.Integer(), nullable=False),
     sa.Column('currency', sa.String(length=255), nullable=False),
     sa.Column('reserved_quantity', sa.Integer(), nullable=False),
     sa.Column('sold_quantity', sa.Integer(), nullable=False),

@@ -27,7 +27,7 @@ class TicketType(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     event_id: Mapped[int] = mapped_column(ForeignKey('events.id'))
     price_cents: Mapped[int]
-    totatl_quantity: Mapped[int]
+    total_quantity: Mapped[int]
     currency: Mapped[str] = mapped_column(String(255), default="Rial")
     reserved_quantity: Mapped[int] = mapped_column(default=0)
     sold_quantity: Mapped[int] = mapped_column(default=0)
