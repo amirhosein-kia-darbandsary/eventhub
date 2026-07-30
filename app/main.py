@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
+from app.api.deps import require_role
+
 from app.core.config import Settings, get_settings
+from app.api.auth import auth_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -14,6 +17,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         title=settings.app_name,
         debug=settings.debug,
     )
+    app.include_router(auth_router)
+
+
+    @app.get("/admin/ping")
+    def admin_ping(user=Depends(require_role("admin"))):
+        return {"message": f"hello admin {user.email}"}
 
     @app.get("/healthz")
     def healthz():
@@ -23,5 +32,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     return app
+
 
 app = create_app()

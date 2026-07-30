@@ -20,3 +20,6 @@ seed:
 
 logs:
 	docker compose logs -f api
+
+run:
+	uv run uvicorn app.main:app --reload

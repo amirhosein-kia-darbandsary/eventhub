@@ -15,6 +15,13 @@ class PostgresSettings(BaseModel):
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
 
+class JwtSettings(BaseModel):
+    private_key_path: str = "keys/private.pem"
+    public_key_pasth: str = "keys/public.pem"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
+
+
 class RedisSettings(BaseModel):
     host: str
     port: str
@@ -35,7 +42,8 @@ class Settings(BaseSettings):
     app_name: str
     debug: bool = False
     environment: str = "dev"
-
+    
+    jwt: JwtSettings
     postgres: PostgresSettings
     redis: RedisSettings
 
