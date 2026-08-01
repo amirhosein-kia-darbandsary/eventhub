@@ -1,17 +1,15 @@
-from fastapi import HTTPException, status
+from app.exceptions.base import DomainError
 
-
-class InvalidCredentialsError(HTTPException):
+class InvalidCredentialsError(DomainError):
     def __init__(self):
-        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED,
-                         detail="Invalid email or password")
+        super().__init__("Invalid email or password")
 
 
-class InvalidTokenError(HTTPException):
+class InvalidTokenError(DomainError):
     def __init__(self, detail: str = "Invalid or expired token"):
-        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+        super().__init__(detail)
 
 
-class ForbiddenError(HTTPException):
+class ForbiddenError(DomainError):
     def __init__(self, detail: str = "You don't have permission to perform this action"):
-        super().__init__(status_code=status.HTTP_403_FORBIDDEN, detail=detail)
+        super().__init__(detail)

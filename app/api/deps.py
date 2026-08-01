@@ -8,14 +8,18 @@ from app.exceptions.auth_exception import ForbiddenError, InvalidTokenError
 from app.core.security import decode_token
 from app.db.session import get_db
 from app.models.user import User
+import uuid
 
-bearer_scheme = HTTPBearer()
+
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    if credentials is None:
+        raise InvalidTokenError("Missing Authorization Header.")
     try:
         payload = decode_token(credentials.credentials)
     except jwt.ExpiredSignatureError:
@@ -26,7 +30,12 @@ async def get_current_user(
     if payload.get("type") != "access":
         raise InvalidTokenError("Expected an access token")
 
-    result = await db.execute(select(User).where(User.id == payload["sub"]))
+    try:
+        user_id = uuid.UUID(payload["sub"])
+    except (ValueError, KeyError):
+        raise InvalidTokenError("Malformed token subject")
+
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user is None:
         raise InvalidTokenError("User no longer exists")
