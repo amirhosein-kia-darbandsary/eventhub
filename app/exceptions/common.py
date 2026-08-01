@@ -6,10 +6,13 @@ class NotFoundError(DomainError):
         self.resource = resource
         self.identifier = identifier
         super().__init__(f"{resource} with id={identifier} not found")
-        
+
+
 class ConflictError(DomainError):
-    """برای تضاد وضعیت -- مثلاً drop کردن venue‌ای که هنوز event فعال داره."""
+    def __init__(self, detail: str = "Some thing wrong happened"):
+        super().__init__(detail)
 
 
 class ValidationAppError(DomainError):
-    """برای قوانین کسب‌وکاری ورای اعتبارسنجی سطح Pydantic."""
+    def __init__(self, detail: str = "Some thing wrong happened"):
+        super().__init__(detail)
