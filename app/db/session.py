@@ -11,9 +11,9 @@ engine = create_async_engine(
     echo=settings.debug,
 )
 
-async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
-
+async_session_factory = async_sessionmaker(engine,
+                                           expire_on_commit=False)
 
 async def get_db():
-    async with async_session_factory.begin() as session:
+    async with async_session_factory() as session:
         yield session
