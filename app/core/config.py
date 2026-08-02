@@ -32,6 +32,13 @@ class RedisSettings(BaseModel):
         return f"redis://{self.host}:{self.port}/{self.name}"
 
 
+class CORSSettings(BaseModel):
+    allow_origins: list[str] = ["*"]  # default for development
+    allow_credentials: bool = True
+    allow_methods: list[str] = ["*"]
+    allow_headers: list[str] = ["*"]
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file='.env',
@@ -42,8 +49,9 @@ class Settings(BaseSettings):
     app_name: str
     debug: bool = False
     environment: str = "dev"
-    
-    jwt: JwtSettings
+
+    jwt: JwtSettings = JwtSettings()
+    cors: CORSSettings = CORSSettings()
     postgres: PostgresSettings
     redis: RedisSettings
 
