@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 from datetime import datetime
+from app.services.ticket_type_service import calculate_available
 
 
 class TicketTypeCreate(BaseModel):
@@ -39,4 +40,4 @@ class TicketTypeRead(BaseModel):
     @computed_field
     @property
     def available(self) -> int:
-        return self.total_quantity - self.reserved_quantity - self.sold_quantity
+        return calculate_available(self.total_quantity, self.reserved_quantity, self.sold_quantity)
