@@ -67,11 +67,17 @@ async def update_event(
     db: AsyncSession = Depends(get_db),
     _admin=Depends(require_role("admin")),
 ):
+    venue_repo = SqlAlchemyVenueRepository(db)
+
     event = await db.get(Event, event_id)
     if event is None:
         raise NotFoundError("Event", event_id)
 
     updates = payload.model_dump(exclude_unset=True)
+    
+    if "venue_id" in updates:
+        await validate_venue_exists(payload.venue_id, venue_repo)
+
     for field, value in updates.items():
         setattr(event, field, value)
 
