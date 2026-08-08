@@ -6,8 +6,11 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.core.config import Settings
 from app.db.base import Base
 from sqlalchemy.pool import NullPool
-
-
+from app.models import event, ticket_type, user, venue
+# Just for register in BaseModel when we want to run the tests in single state not all of
+# them together when you run for example just constraint test alone you'll get an error
+# about Undefined Table Error that means in the Base.metadata.create_all python can't figure
+# which models are...
 settings = Settings(_env_file=".env.test")
 
 test_engine = create_async_engine(settings.postgres.url, poolclass=NullPool)

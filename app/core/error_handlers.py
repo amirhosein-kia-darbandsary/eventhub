@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-
+from sqlalchemy.exc import IntegrityError
 from app.exceptions.auth_exception import (
     ForbiddenError, InvalidCredentialsError,
     InvalidTokenError
@@ -41,9 +41,11 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ForbiddenError)
     async def handle_forbidden(request: Request, exc: ForbiddenError):
         return _error_response("forbidden", str(exc), status.HTTP_403_FORBIDDEN)
+
     @app.exception_handler(ValueError)
     async def handle_value_error(request: Request, exc: ValueError):
         return _error_response("invalid_input", str(exc), status.HTTP_400_BAD_REQUEST)
+
     @app.exception_handler(RequestValidationError)
     async def handle_pydantic_validation(request: Request, exc: RequestValidationError):
         return _error_response(
@@ -51,4 +53,12 @@ def register_exception_handlers(app: FastAPI) -> None:
             "Request validation failed",
             status.HTTP_422_UNPROCESSABLE_ENTITY,
             details={"errors": jsonable_encoder(exc.errors())},
+        )
+
+    @app.exception_handler(IntegrityError)
+    async def handle_integrity_error(request: Request, exc: IntegrityError):
+        return _error_response(
+            "conflict",
+            "This operation violates a database constraint (e.g. a duplicate value).",
+            status.HTTP_409_CONFLICT
         )
