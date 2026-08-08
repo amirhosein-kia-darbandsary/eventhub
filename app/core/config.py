@@ -46,7 +46,7 @@ class Settings(BaseSettings):
         extra='forbid'
     )
 
-    app_name: str
+    app_name: str = "eventhub"
     debug: bool = False
     environment: str = "dev"
 
