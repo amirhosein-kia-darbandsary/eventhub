@@ -6,12 +6,14 @@ from app.api.auth import auth_router
 from app.api.venue import venue_router
 from app.api.event import event_router
 from app.api.ticket import ticket_router
+from app.api.reserve import reserve_router
 from app.core.middleware.request_id_middleware import RequestIDMiddleware
 from app.core.middleware.timing_middleware import TimingMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare
 from app.core.error_handlers import register_exception_handlers
+
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -32,6 +34,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(venue_router)
     app.include_router(event_router)
     app.include_router(ticket_router)
+    app.include_router(reserve_router)
 
     
     # RequestID  →  Timing  →  CORS  →  RateLimit  →  GZip  →  Routers
