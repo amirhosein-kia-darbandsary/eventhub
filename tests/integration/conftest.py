@@ -69,3 +69,27 @@ async def client(db_session):
         base_url="http://test"
     ) as test_client:
         yield test_client
+
+
+@pytest_asyncio.fixture
+async def admin_client(db_session, client):
+    from app.core.security import hash_password
+    from app.models.user import User, UserRole
+    from pydantic import SecretStr
+
+    admin = User(
+        email="admin-test@eventhub.dev",
+        hashed_password=hash_password(SecretStr("adminpass123")),
+        full_name="Admin Test User",
+        role=UserRole.admin,
+    )
+    db_session.add(admin)
+    await db_session.flush()  
+
+    login_response = await client.post(
+        "/auth/login", json={"email": "admin-test@eventhub.dev", "password": "adminpass123"}
+    )
+    token = login_response.json()["access_token"]
+    client.headers["Authorization"] = f"Bearer {token}"
+
+    yield client
