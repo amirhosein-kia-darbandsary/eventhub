@@ -52,6 +52,8 @@ async def create_reservation_service(db: AsyncEngine,
         await db.commit()
     except IntegrityError:
         await db.rollback()
+        if idempotency_key is None:
+            raise
         existing = await db.execute(
             select(Reservation).where(Reservation.idempotency_key == idempotency_key)
         )

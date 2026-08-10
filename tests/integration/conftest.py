@@ -1,4 +1,5 @@
 
+from sqlalchemy import text
 from httpx import AsyncClient, ASGITransport
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -6,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.core.config import Settings
 from app.db.base import Base
 from sqlalchemy.pool import NullPool
-from app.models import event, ticket_type, user, venue
+from app.models import event, ticket_type, user, venue, reserve
 # Just for register in BaseModel when we want to run the tests in single state not all of
 # them together when you run for example just constraint test alone you'll get an error
 # about Undefined Table Error that means in the Base.metadata.create_all python can't figure
@@ -84,7 +85,7 @@ async def admin_client(db_session, client):
         role=UserRole.admin,
     )
     db_session.add(admin)
-    await db_session.flush()  
+    await db_session.flush()
 
     login_response = await client.post(
         "/auth/login", json={"email": "admin-test@eventhub.dev", "password": "adminpass123"}
@@ -93,3 +94,57 @@ async def admin_client(db_session, client):
     client.headers["Authorization"] = f"Bearer {token}"
 
     yield client
+
+
+test_session_factory = async_sessionmaker(test_engine, expire_on_commit=False)
+
+
+@pytest_asyncio.fixture
+async def concurrency_client():
+
+    from httpx import ASGITransport, AsyncClient
+
+    from app.db.session import get_db
+    from app.main import create_app
+
+    app = create_app()
+
+    async def override_get_db():
+        async with test_session_factory() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as test_client:
+        yield test_client
+
+    async with test_engine.connect() as conn:
+        await conn.execute(text("DELETE FROM reservations"))
+        await conn.execute(text("DELETE FROM ticket_types"))
+        await conn.execute(text("DELETE FROM events"))
+        await conn.execute(text("DELETE FROM venues"))
+        await conn.execute(text("DELETE FROM users"))
+        await conn.commit()
+
+@pytest_asyncio.fixture
+async def concurrency_admin_headers(concurrency_client):
+    from app.core.security import hash_password
+    from app.models.user import User, UserRole
+    from pydantic import SecretStr
+    async with test_session_factory() as session:
+        admin = User(
+            email="concurrency-admin@eventhub.dev",
+            hashed_password=hash_password(SecretStr("adminpass123")),
+            full_name="Concurrency Admin",
+            role=UserRole.admin,
+        )
+        session.add(admin)
+        await session.commit()  
+
+    login_response = await concurrency_client.post(
+        "/auth/login",
+        json={"email": "concurrency-admin@eventhub.dev", "password": "adminpass123"},
+    )
+    token = login_response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

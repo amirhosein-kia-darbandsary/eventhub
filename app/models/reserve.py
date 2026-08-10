@@ -45,9 +45,10 @@ class Reservation(Base):
     idempotency_key: Mapped[str] = mapped_column(
         String(255),
         unique=True,
+        nullable=True
     )
 
-    expires_at: Mapped[datetime]
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -81,3 +82,4 @@ class Order(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+    

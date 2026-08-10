@@ -13,7 +13,7 @@ class ReservationRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     ticket_type_id: int
     quantity: int = Field(gt=0, examples=[2])
-    id: uuid.UUID
+    id: int
     user_id: uuid.UUID  # 
     status: ReservationStatus
     expires_at: datetime
