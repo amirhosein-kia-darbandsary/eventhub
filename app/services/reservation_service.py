@@ -67,7 +67,7 @@ async def create_reservation_service(db: AsyncEngine,
     return reservation
 
 
-async def cancel_reservation(db: AsyncSession, reservation_id, user_id: uuid.UUID) -> Reservation:
+async def cancel_reservation_service(db: AsyncSession, reservation_id:int, user_id: uuid.UUID) -> Reservation:
     result = await db.execute(
         select(Reservation).where(Reservation.id ==
                                   reservation_id).with_for_update()
@@ -83,7 +83,6 @@ async def cancel_reservation(db: AsyncSession, reservation_id, user_id: uuid.UUI
         raise ConflictError(
             f"Cannot cancel a reservation with status '{reservation.status.value}'")
 
-    # همون ردیف ticket_type رو هم قفل کن، چون داریم reserved_quantity رو تغییر می‌دیم
     tt_result = await db.execute(
         select(TicketType).where(TicketType.id ==
                                  reservation.ticket_type_id).with_for_update()

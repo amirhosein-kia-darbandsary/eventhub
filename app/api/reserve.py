@@ -2,15 +2,15 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
 from app.schemas.reserve import ReservationCreate, ReservationRead
-from fastapi import status, Depends, Header
-from app.api.deps import  get_current_user
-from app.services.reservation_service import create_reservation_service
+from fastapi import status, Depends, Header, Query
+from app.api.deps import get_current_user
+from app.services.reservation_service import create_reservation_service, cancel_reservation_service
 from app.models.user import User
 reserve_router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 
 @reserve_router.post('', response_model=ReservationRead, status_code=status.HTTP_201_CREATED)
-async def create_reservation(payload:ReservationCreate,
+async def create_reservation(payload: ReservationCreate,
                              user: User = Depends(get_current_user),
                              db: AsyncSession = Depends(get_db),
                              idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),):
@@ -22,4 +22,14 @@ async def create_reservation(payload:ReservationCreate,
     return result
 
 
+@reserve_router.post('/{reservation_id}/cancel',
+                     response_model=ReservationRead,
+                     status_code=status.HTTP_200_OK)
+async def cancel_reservation(reservation_id:int,
+                             db: AsyncSession = Depends(get_db),
+                             user:User=Depends(get_current_user)):
     
+    result = await cancel_reservation_service(db, reservation_id=reservation_id, user_id=user.id)
+    return result
+
+# 2432ffa3-4f50-47eb-9665-d49682fb1c49

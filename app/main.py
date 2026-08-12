@@ -35,7 +35,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(event_router)
     app.include_router(ticket_router)
     app.include_router(reserve_router)
-
     
     # RequestID  →  Timing  →  CORS  →  RateLimit  →  GZip  →  Routers
     # Don't Forget boy :) startlet make these things in the reveser :)
