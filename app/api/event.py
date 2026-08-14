@@ -1,3 +1,5 @@
+from app.core.redis_client_ import redis_client
+from app.core.cache import invalidate_cache
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +14,7 @@ from app.schemas.event import EventCreate, EventRead, EventUpdate
 
 from app.repositories.venue_repository import SqlAlchemyVenueRepository
 from app.services.event_service import validate_venue_exists
-
+from app.core.cache import cache_aside
 event_router = APIRouter(prefix="/events", tags=["events"])
 
 
@@ -40,24 +42,31 @@ async def list_events(
     limit: int = Query(default=20, ge=1, le=100),
     status: EventStatus = Query(default=EventStatus.published)
 ):
-    stmt = select(Event).where(Event.status == status)
+    cache_key = f"events:list:cursor={cursor}:limit={limit}"
 
-    try:
-        rows, next_cursor, has_more = await paginate(
-            db, stmt, sort_column=Event.starts_at, id_column=Event.id, cursor=cursor, limit=limit
-        )
-    except ValueError:
-        raise ValidationAppError("Invalid cursor value")
+    async def fetch_from_db():
+        stmt = select(Event).where(Event.status == status)
 
-    return CursorPage(items=rows, next_cursor=next_cursor, has_more=has_more)
+        try:
+            rows, next_cursor, has_more = await paginate(
+                db, stmt, sort_column=Event.starts_at, id_column=Event.id, cursor=cursor, limit=limit
+            )
+        except ValueError:
+            raise ValidationAppError("Invalid cursor value")
+        page = CursorPage[EventRead](
+            items=rows, next_cursor=next_cursor, has_more=has_more)
+        return page.model_dump(mode="json")
+    return await cache_aside(key=cache_key, ttl_seconds=30, compute=fetch_from_db)
 
 
 @event_router.get("/{event_id}", response_model=EventRead)
 async def get_event(event_id: int, db: AsyncSession = Depends(get_db)):
-    event = await db.get(Event, event_id)
-    if event is None:
-        raise NotFoundError("Event", event_id)
-    return event
+    async def fetch_from_db():
+        event = await db.get(Event, event_id)
+        if event is None:
+            raise NotFoundError("Event", event_id)
+        return EventRead.model_validate(event).model_dump(mode='json')
+    return await cache_aside(f"event:{event_id}", 60, fetch_from_db)
 
 
 @event_router.patch("/{event_id}", response_model=EventRead)
@@ -67,17 +76,11 @@ async def update_event(
     db: AsyncSession = Depends(get_db),
     _admin=Depends(require_role("admin")),
 ):
-    venue_repo = SqlAlchemyVenueRepository(db)
-
     event = await db.get(Event, event_id)
     if event is None:
         raise NotFoundError("Event", event_id)
 
     updates = payload.model_dump(exclude_unset=True)
-    
-    if "venue_id" in updates:
-        await validate_venue_exists(payload.venue_id, venue_repo)
-
     for field, value in updates.items():
         setattr(event, field, value)
 
@@ -86,4 +89,8 @@ async def update_event(
 
     await db.commit()
     await db.refresh(event)
+
+
+    await invalidate_cache(redis_client, f"event:{event_id}")
+
     return event
