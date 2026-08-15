@@ -1,4 +1,4 @@
-.PHONY: up down test migrate migrate-down seed logs 
+.PHONY: up down test migrate migrate-down seed logs worker
 
 up:
 	docker compose up --build
@@ -23,3 +23,7 @@ logs:
 
 run:
 	uv run uvicorn app.main:app --reload
+
+
+worker:
+	uv run dramatiq app.services.notification_service

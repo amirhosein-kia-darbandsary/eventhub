@@ -14,6 +14,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare
 from app.core.error_handlers import register_exception_handlers
+# from app.core.setup_dramiq import dramatiq
 
 
 import logging

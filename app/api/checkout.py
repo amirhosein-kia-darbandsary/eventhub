@@ -7,20 +7,25 @@ from app.api.deps import get_current_user
 from app.models.reserve import Reservation
 from sqlalchemy import select
 from app.exceptions.common import NotFoundError
-from fastapi.background import BackgroundTasks
 from app.services.reservation_service import confirm_reservation
-from app.services.notification_service import  send_confirmation_email
-
+from app.services.notification_service import send_confirmation_email
+from starlette.concurrency import run_in_threadpool
+from redis.exceptions import RedisError
+from app.services.reservation_service import logger
 checkout_router = APIRouter(prefix="/checkout", tags=['checkout'])
 
 
 @checkout_router.post('/{reservation_id}', status_code=status.HTTP_200_OK)
-async def checkout_api(reservation_id:int,
-                       background_tasks: BackgroundTasks,
+async def checkout_api(reservation_id: int,
                        db: AsyncSession = Depends(get_db),
                        user: User = Depends(get_current_user)):
+
     reservation = await confirm_reservation(db, reservation_id, user.id)
 
-    background_tasks.add_task(send_confirmation_email, user.email, reservation.id)
+    try:
+        await run_in_threadpool(send_confirmation_email.send, user.email, reservation.id)
+    except RedisError:
+        logger.error(
+            f"Failed to enqueue confirmation email for reservation {reservation.id}", exc_info=True)
 
     return {"status": "confirmed", "reservation_id": reservation.id}
