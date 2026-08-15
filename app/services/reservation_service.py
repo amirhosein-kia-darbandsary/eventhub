@@ -9,6 +9,10 @@ from app.exceptions.common import NotFoundError, ConflictError
 from sqlalchemy.exc import IntegrityError
 from app.services.ticket_type_service import calculate_available
 from datetime import datetime, timedelta, timezone
+import logging
+
+
+logger = logging.Logger("eventhub-logger")
 
 DEFAULT_TTL_MINUTES = 15
 
@@ -94,3 +98,58 @@ async def cancel_reservation_service(db: AsyncSession, reservation_id:int, user_
     await db.commit()
     await db.refresh(reservation)
     return reservation
+
+async def confirm_reservation(db: AsyncSession, reservation_id: int, user_id: uuid.UUID) -> Reservation:
+    result = await db.execute(
+        select(Reservation).where(Reservation.id == reservation_id).with_for_update()
+    )
+    reservation = result.scalar_one_or_none()
+    if reservation is None:
+        raise NotFoundError("Reservation", reservation_id)
+
+    if reservation.user_id != user_id:
+        raise ForbiddenError("You can only confirm your own reservations")
+
+    if reservation.status != ReservationStatus.pending:
+        raise ConflictError(f"Cannot confirm a reservation with status '{reservation.status.value}'")
+
+    if reservation.expires_at < datetime.now(timezone.utc):
+        raise ConflictError("This reservation has expired")
+
+    tt_result = await db.execute(
+        select(TicketType).where(TicketType.id == reservation.ticket_type_id).with_for_update()
+    )
+    ticket_type = tt_result.scalar_one()
+
+    ticket_type.reserved_quantity -= reservation.quantity
+    ticket_type.sold_quantity += reservation.quantity
+
+    reservation.status = ReservationStatus.confirmed
+    await db.commit()
+    await db.refresh(reservation)
+    return reservation
+
+async def cleanup_expired_reservations(db: AsyncSession) -> int:
+
+    result = await db.execute(
+        select(Reservation)
+        .where(Reservation.status == ReservationStatus.pending)
+        .where(Reservation.expires_at < datetime.now(timezone.utc))
+        .with_for_update()
+    )
+    expired_reservations = result.scalars().all()
+
+    count = 0
+    for reservation in expired_reservations:
+        tt_result = await db.execute(
+            select(TicketType).where(TicketType.id == reservation.ticket_type_id).with_for_update()
+        )
+        ticket_type = tt_result.scalar_one()
+        ticket_type.reserved_quantity -= reservation.quantity
+
+        reservation.status = ReservationStatus.expired
+        count += 1
+
+    await db.commit()
+    logger.info(f"[CLEANUP] Expired {count} stale reservations")
+    return count

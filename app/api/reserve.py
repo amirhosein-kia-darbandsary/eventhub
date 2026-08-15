@@ -31,5 +31,3 @@ async def cancel_reservation(reservation_id:int,
     
     result = await cancel_reservation_service(db, reservation_id=reservation_id, user_id=user.id)
     return result
-
-# 2432ffa3-4f50-47eb-9665-d49682fb1c49
