@@ -1,26 +1,39 @@
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import DateTime,String
+from sqlalchemy import DateTime, String, Enum
 from datetime import datetime
 from app.db.base import Base
+import uuid
+import enum
+from sqlalchemy import func
 
 
-class WebhookEvent(Base):
+
+class WebHookEventStatus(str, enum.Enum):
+    received = "received"    # recently arrieved
+    processed = "processed"  # Successful
+    dead_letter = "dead_letter"  # after retrying has failed
+
+
+class WebHookEvent(Base):
     __tablename__ = "webhook_events"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
 
     provider_event_id: Mapped[str] = mapped_column(
         String(255),
         unique=True,
     )
 
-    payload: Mapped[dict] = mapped_column(JSON)
+    payload: Mapped[str] = mapped_column(String)
 
     processed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
-        nullable=True,
+        server_default=func.now(),
     )
+    status: Mapped[WebHookEventStatus] = mapped_column(Enum(WebHookEventStatus),
+                                                       default=WebHookEventStatus.processed)
+
 
 class ApiKey(Base):
     __tablename__ = "api_keys"
@@ -40,6 +53,7 @@ class ApiKey(Base):
     scopes: Mapped[str]
 
     rate_limit_tier: Mapped[int]
+
 
 class FeatureFlag(Base):
     __tablename__ = "feature_flags"
