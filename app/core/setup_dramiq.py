@@ -1,6 +1,6 @@
 import dramatiq
 from dramatiq.brokers.redis import RedisBroker
-
+from periodiq import PeriodiqMiddleware
 from app.core.config import get_settings
 import socket
 
@@ -19,5 +19,5 @@ redis_broker = RedisBroker(
         socket.TCP_KEEPCNT: 3,     
     },
 )
-
+redis_broker.add_middleware(PeriodiqMiddleware(skip_delay=30))
 dramatiq.set_broker(redis_broker)

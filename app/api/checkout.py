@@ -8,7 +8,7 @@ from app.models.reserve import Reservation
 from sqlalchemy import select
 from app.exceptions.common import NotFoundError
 from app.services.reservation_service import confirm_reservation
-from app.services.notification_service import send_confirmation_email
+from app.workers.notification_worker import send_confirmation_email
 from starlette.concurrency import run_in_threadpool
 from redis.exceptions import RedisError
 from app.services.reservation_service import logger

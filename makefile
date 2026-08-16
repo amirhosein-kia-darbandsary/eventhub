@@ -26,4 +26,4 @@ run:
 
 
 worker:
-	uv run dramatiq app.services.notification_service
+	uv run dramatiq app.workers.worker --processes 2 --threads 4
