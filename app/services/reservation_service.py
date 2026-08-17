@@ -100,6 +100,7 @@ async def cancel_reservation_service(db: AsyncSession, reservation_id:int, user_
     return reservation
 
 async def confirm_reservation(db: AsyncSession, reservation_id: int, user_id: uuid.UUID) -> Reservation:
+    
     result = await db.execute(
         select(Reservation).where(Reservation.id == reservation_id).with_for_update()
     )
@@ -110,6 +111,23 @@ async def confirm_reservation(db: AsyncSession, reservation_id: int, user_id: uu
     if reservation.user_id != user_id:
         raise ForbiddenError("You can only confirm your own reservations")
 
+    return await _confirm_reservation_core(db, reservation)
+
+
+async def confirm_reservation_internal(db: AsyncSession, reservation_id: int) -> Reservation:
+    
+    result = await db.execute(
+        select(Reservation).where(Reservation.id == reservation_id).with_for_update()
+    )
+    reservation = result.scalar_one_or_none()
+    if reservation is None:
+        raise NotFoundError("Reservation", reservation_id)
+
+    return await _confirm_reservation_core(db, reservation)
+
+
+async def _confirm_reservation_core(db: AsyncSession, reservation: Reservation) -> Reservation:
+   
     if reservation.status != ReservationStatus.pending:
         raise ConflictError(f"Cannot confirm a reservation with status '{reservation.status.value}'")
 
