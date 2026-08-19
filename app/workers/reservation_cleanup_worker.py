@@ -4,7 +4,7 @@ import dramatiq
 from periodiq import cron
 
 from app.core.setup_dramiq import redis_broker  
-from app.db.session import async_session_factory
+from app.db.worker_session import worker_async_session_factory 
 from app.services.reservation_service import cleanup_expired_reservations
 
 
@@ -12,7 +12,7 @@ from app.services.reservation_service import cleanup_expired_reservations
 def cleanup_expired_reservations_task():
 
     async def _run_cleanup():
-        async with async_session_factory() as session:
+        async with worker_async_session_factory() as session:
             await cleanup_expired_reservations(session)
             
     asyncio.run(_run_cleanup())

@@ -25,7 +25,7 @@ run:
 	uv run uvicorn app.main:app --reload
 
 worker:
-	uv run dramatiq app.workers.worker  --processes 2 --threads 4
+	uv run dramatiq app.workers.worker  --processes 4 --threads 1
 
 scheduler:
 	uv run periodiq app.workers.worker

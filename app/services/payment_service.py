@@ -29,6 +29,7 @@ class PaymentProviderError(Exception):
 )
 def _call_payment_provider(reservation_id: int, amount_cents: int, callback_url: str) -> dict:
     with httpx.Client(timeout=5) as client:
+        print(_settings.payment.url)
         response = client.post(
             f"{_settings.payment.url}/payments",
             json={

@@ -8,7 +8,7 @@ import json
 from app.workers.payment_service_worker import process_payment_webhook
 
 
-webhook_router = APIRouter(prefix='webhooks/', tags=['webhook'])
+webhook_router = APIRouter(prefix='/webhooks', tags=['webhook'])
 
 
 @webhook_router.post("/payment", status_code=status.HTTP_200_OK)
@@ -19,7 +19,7 @@ async def webhook(request: Request, db: AsyncSession = Depends(get_db)):
     db.add(event)
 
     try:
-        await db.commit
+        await db.commit()
     except IntegrityError:
         await db.rollback()
         return {"status": "already_received"}
