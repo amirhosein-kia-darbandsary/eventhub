@@ -6,6 +6,8 @@ from fastapi import status, Depends, Header, Query
 from app.api.deps import get_current_user
 from app.services.reservation_service import create_reservation_service, cancel_reservation_service
 from app.models.user import User
+from app.models.reserve import Reservation
+from sqlalchemy import select
 reserve_router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 
@@ -25,9 +27,17 @@ async def create_reservation(payload: ReservationCreate,
 @reserve_router.post('/{reservation_id}/cancel',
                      response_model=ReservationRead,
                      status_code=status.HTTP_200_OK)
-async def cancel_reservation(reservation_id:int,
+async def cancel_reservation(reservation_id: int,
                              db: AsyncSession = Depends(get_db),
-                             user:User=Depends(get_current_user)):
-    
+                             user: User = Depends(get_current_user)):
+
     result = await cancel_reservation_service(db, reservation_id=reservation_id, user_id=user.id)
     return result
+
+
+@reserve_router.get('', response_model=list[ReservationRead], status_code=status.HTTP_200_OK)
+async def get_user_reservation(db: AsyncSession = Depends(get_db), 
+                               user: User = Depends(get_current_user)):
+    stmt = select(Reservation).where(Reservation.user_id==user.id)
+    result = await db.execute(stmt)
+    return result.scalars()
