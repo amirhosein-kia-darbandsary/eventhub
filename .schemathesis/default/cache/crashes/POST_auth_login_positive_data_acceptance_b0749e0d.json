@@ -1,0 +1,87 @@
+{
+  "operation": "POST /auth/login",
+  "method": "POST",
+  "path_template": "/auth/login",
+  "fingerprint": "b0749e0d",
+  "case_id": "I9kwQw",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"email\": \"0@com\", \"password\": \"\"}' http://localhost:8000/auth/login",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/auth/login",
+      "url_template": "http://localhost:8000/auth/login",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "I9kwQw",
+        "Content-Type": "application/json",
+        "Content-Length": "34"
+      },
+      "response": {
+        "status_code": 422,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:01 GMT",
+          "server": "uvicorn",
+          "content-length": "351",
+          "content-type": "application/json",
+          "x-response-time": "0.83ms",
+          "x-request-id": "bb5c1292-6ad2-4878-a218-b41dec65df79"
+        },
+        "body": "{\"code\":\"request_validation_error\",\"message\":\"Request validation failed\",\"details\":{\"errors\":[{\"type\":\"value_error\",\"loc\":[\"body\",\"email\"],\"msg\":\"value is not a valid email address: The part after the @-sign is not valid. It should have a period.\",\"input\":\"0@com\",\"ctx\":{\"reason\":\"The part after the @-sign is not valid. It should have a period.\"}}]}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.04476120095932856,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Valid object",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/auth/login",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0@com",
+          "password": "[Filtered]"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

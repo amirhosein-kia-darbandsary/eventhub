@@ -1,0 +1,97 @@
+{
+  "operation": "POST /ticket-types",
+  "method": "POST",
+  "path_template": "/ticket-types",
+  "fingerprint": "e06d1141",
+  "case_id": "Rz1zfH",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"event_id\": 1, \"price_cents\": 15000, \"sales_ends_at\": \"2026-09-01T20:00:00Z\", \"sales_start_at\": \"2026-09-01T19:00:00Z\", \"total_quantity\": 100}' http://localhost:8000/ticket-types",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/ticket-types",
+      "url_template": "http://localhost:8000/ticket-types",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "Rz1zfH",
+        "Content-Type": "application/json",
+        "Content-Length": "143"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:02 GMT",
+          "server": "uvicorn",
+          "content-length": "81",
+          "content-type": "application/json",
+          "x-response-time": "0.91ms",
+          "x-request-id": "41f7285e-0455-44c8-9b57-3cd88f51d437"
+        },
+        "body": "{\"code\":\"invalid_token\",\"message\":\"Missing Authorization Header.\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.3828976079821587e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "body",
+            "event_id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {}
+        }
+      },
+      "path": "/ticket-types",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "event_id": 1,
+          "price_cents": 15000,
+          "sales_ends_at": "2026-09-01T20:00:00Z",
+          "sales_start_at": "2026-09-01T19:00:00Z",
+          "total_quantity": 100
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

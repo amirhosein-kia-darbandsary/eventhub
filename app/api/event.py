@@ -15,6 +15,9 @@ from app.schemas.event import EventCreate, EventRead, EventUpdate
 from app.repositories.venue_repository import SqlAlchemyVenueRepository
 from app.services.event_service import validate_venue_exists
 from app.core.cache import cache_aside
+from app.core.config import INT32_MAX
+from fastapi import Path
+
 event_router = APIRouter(prefix="/events", tags=["events"])
 
 
@@ -60,7 +63,7 @@ async def list_events(
 
 
 @event_router.get("/{event_id}", response_model=EventRead)
-async def get_event(event_id: int, db: AsyncSession = Depends(get_db)):
+async def get_event(event_id: int = Path(gt=0, lt=INT32_MAX), db: AsyncSession = Depends(get_db)):
     async def fetch_from_db():
         event = await db.get(Event, event_id)
         if event is None:
@@ -71,8 +74,8 @@ async def get_event(event_id: int, db: AsyncSession = Depends(get_db)):
 
 @event_router.patch("/{event_id}", response_model=EventRead)
 async def update_event(
-    event_id: int,
     payload: EventUpdate,
+    event_id: int = Path(gt=0, lt=INT32_MAX),
     db: AsyncSession = Depends(get_db),
     _admin=Depends(require_role("admin")),
 ):
@@ -89,7 +92,6 @@ async def update_event(
 
     await db.commit()
     await db.refresh(event)
-
 
     await invalidate_cache(redis_client, f"event:{event_id}")
 

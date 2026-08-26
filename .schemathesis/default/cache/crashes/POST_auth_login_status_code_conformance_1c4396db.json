@@ -1,0 +1,88 @@
+{
+  "operation": "POST /auth/login",
+  "method": "POST",
+  "path_template": "/auth/login",
+  "fingerprint": "1c4396db",
+  "case_id": "Cszz0n",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"email\": \"0@com\", \"password\": \"\"}' http://localhost:8000/auth/login",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/auth/login",
+      "url_template": "http://localhost:8000/auth/login",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "Cszz0n",
+        "Content-Type": "application/json",
+        "Content-Length": "34"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.24ms",
+          "x-request-id": "2d6f6850-6d13-4826-b13e-415b02217329"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 429\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.028951180051080883,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/auth/login",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0@com",
+          "password": "[Filtered]"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

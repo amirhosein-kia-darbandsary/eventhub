@@ -1,0 +1,89 @@
+{
+  "operation": "GET /events/{event_id}",
+  "method": "TRACE",
+  "path_template": "/events/{event_id}",
+  "fingerprint": "41e5a04f",
+  "case_id": "jEzxS6",
+  "code_sample": "curl -X TRACE -H 'Authorization: [Filtered]' http://localhost:8000/events/0",
+  "sequence": [
+    {
+      "method": "TRACE",
+      "url": "http://localhost:8000/events/0",
+      "url_template": "http://localhost:8000/events/{event_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "jEzxS6",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:12 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.18ms",
+          "x-request-id": "68b82a2b-4c68-4e66-8056-b9755694d39e"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "unsupported_method",
+          "status": "failure",
+          "message": "Unsupported methods\n\nUnsupported method TRACE returned 429, expected 405 Method Not Allowed\n\nReturn 405 for methods not listed in the OpenAPI spec"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 6.704998668283224e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: TRACE",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "event_id": 0
+          }
+        }
+      },
+      "path": "/events/{event_id}",
+      "path_parameters": {
+        "event_id": "0"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "operation": "POST /reservations/{reservation_id}/cancel",
+  "method": "POST",
+  "path_template": "/reservations/{reservation_id}/cancel",
+  "fingerprint": "5d0d1351",
+  "case_id": "o5X7Bz",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' http://localhost:8000/reservations/1/cancel",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/reservations/1/cancel",
+      "url_template": "http://localhost:8000/reservations/{reservation_id}/cancel",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "o5X7Bz",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 409,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:42 GMT",
+          "server": "uvicorn",
+          "content-length": "98",
+          "content-type": "application/json",
+          "x-response-time": "1013.98ms",
+          "x-request-id": "c0331b66-6abb-4753-aad3-ecdb602696ff"
+        },
+        "body": "{\"code\":\"conflict\",\"message\":\"Cannot cancel a reservation with status 'cancelled'\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 409\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00270531396381557,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "reservation_id",
+            "resource_name": "ReservationRead",
+            "resource_field": "id",
+            "source_operation": "GET /reservations",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/reservations/{reservation_id}/cancel",
+      "path_parameters": {
+        "reservation_id": 1
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

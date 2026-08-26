@@ -1,0 +1,80 @@
+{
+  "operation": "POST /webhooks/payment",
+  "method": "POST",
+  "path_template": "/webhooks/payment",
+  "fingerprint": "0b509095",
+  "case_id": "wqGw55",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' http://localhost:8000/webhooks/payment",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/webhooks/payment",
+      "url_template": "http://localhost:8000/webhooks/payment",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "wqGw55",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:02 GMT",
+          "server": "uvicorn",
+          "content-length": "93",
+          "content-type": "application/json",
+          "x-response-time": "1.15ms",
+          "x-request-id": "21b18377-fbdc-4f25-8fbe-f6a2125e2a92"
+        },
+        "body": "{\"code\":\"invalid_input\",\"message\":\"Expecting value: line 1 column 1 (char 0)\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 200"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 3.534002462401986e-05,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Default positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "default_positive_test"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/webhooks/payment",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "operation": "GET /reservations",
+  "method": "GET",
+  "path_template": "/reservations",
+  "fingerprint": "36593f6a",
+  "case_id": "0jFeXo",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' http://localhost:8000/reservations",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/reservations",
+      "url_template": "http://localhost:8000/reservations",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "0jFeXo"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.22ms",
+          "x-request-id": "f9ff5705-86bf-4f07-b3ef-a9c2740868fd"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 429\nDocumented: 200"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.001003551995381713,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/reservations",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

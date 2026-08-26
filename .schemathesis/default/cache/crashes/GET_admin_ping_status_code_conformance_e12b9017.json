@@ -1,0 +1,80 @@
+{
+  "operation": "GET /admin/ping",
+  "method": "GET",
+  "path_template": "/admin/ping",
+  "fingerprint": "e12b9017",
+  "case_id": "xoZ7U2",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' http://localhost:8000/admin/ping",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/admin/ping",
+      "url_template": "http://localhost:8000/admin/ping",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "xoZ7U2"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.20ms",
+          "x-request-id": "84df1563-4a61-468c-8230-1f627afa09e3"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 429\nDocumented: 200"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0009869300411082804,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/admin/ping",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

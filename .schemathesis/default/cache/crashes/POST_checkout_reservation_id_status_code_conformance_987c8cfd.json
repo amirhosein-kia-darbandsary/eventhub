@@ -1,0 +1,84 @@
+{
+  "operation": "POST /checkout/{reservation_id}",
+  "method": "POST",
+  "path_template": "/checkout/{reservation_id}",
+  "fingerprint": "987c8cfd",
+  "case_id": "ltqnVK",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' http://localhost:8000/checkout/305",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/checkout/305",
+      "url_template": "http://localhost:8000/checkout/{reservation_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "ltqnVK",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:07:05 GMT",
+          "server": "uvicorn",
+          "content-length": "81",
+          "content-type": "application/json",
+          "x-response-time": "996.86ms",
+          "x-request-id": "939d049d-f967-4017-bde3-2c9792ccedfa"
+        },
+        "body": "{\"code\":\"not_found\",\"message\":\"Reservation with id=305 not found\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00272368302103132,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/checkout/{reservation_id}",
+      "path_parameters": {
+        "reservation_id": 305
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

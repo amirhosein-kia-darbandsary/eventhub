@@ -1,0 +1,89 @@
+{
+  "operation": "POST /events",
+  "method": "POST",
+  "path_template": "/events",
+  "fingerprint": "e12ae30b",
+  "case_id": "5sfjpV",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"ends_at\": \"2000-01-01T00:00:00Z\", \"starts_at\": \"2000-01-01T00:00:00Z\", \"title\": \"\", \"venue_id\": 0}' http://localhost:8000/events",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/events",
+      "url_template": "http://localhost:8000/events",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "5sfjpV",
+        "Content-Type": "application/json",
+        "Content-Length": "100"
+      },
+      "response": {
+        "status_code": 422,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:07 GMT",
+          "server": "uvicorn",
+          "content-length": "308",
+          "content-type": "application/json",
+          "x-response-time": "711.85ms",
+          "x-request-id": "27620712-6ff7-4aa3-88f5-bee58bdb9ccf"
+        },
+        "body": "{\"code\":\"request_validation_error\",\"message\":\"Request validation failed\",\"details\":{\"errors\":[{\"type\":\"value_error\",\"loc\":[\"body\"],\"msg\":\"Value error, ends_at must be after starts_at\",\"input\":{\"ends_at\":\"2000-01-01T00:00:00Z\",\"starts_at\":\"2000-01-01T00:00:00Z\",\"title\":\"\",\"venue_id\":0},\"ctx\":{\"error\":{}}}]}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.004962873994372785,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/events",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "ends_at": "2000-01-01T00:00:00Z",
+          "starts_at": "2000-01-01T00:00:00Z",
+          "title": "",
+          "venue_id": 0
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

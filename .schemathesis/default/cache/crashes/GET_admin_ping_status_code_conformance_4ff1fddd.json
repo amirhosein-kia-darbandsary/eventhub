@@ -1,0 +1,82 @@
+{
+  "operation": "GET /admin/ping",
+  "method": "GET",
+  "path_template": "/admin/ping",
+  "fingerprint": "4ff1fddd",
+  "case_id": "Aly7fy",
+  "code_sample": "curl -X GET http://localhost:8000/admin/ping",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/admin/ping",
+      "url_template": "http://localhost:8000/admin/ping",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "Aly7fy"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:02 GMT",
+          "server": "uvicorn",
+          "content-length": "81",
+          "content-type": "application/json",
+          "x-response-time": "0.79ms",
+          "x-request-id": "a9cf62a8-3a8e-460c-bd47-287a1d5c3266"
+        },
+        "body": "{\"code\":\"invalid_token\",\"message\":\"Missing Authorization Header.\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 200"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.3199984095990658e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {}
+        }
+      },
+      "path": "/admin/ping",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
+INT32_MAX = 2_147_483_647
 
 class PostgresSettings(BaseModel):
     user: str

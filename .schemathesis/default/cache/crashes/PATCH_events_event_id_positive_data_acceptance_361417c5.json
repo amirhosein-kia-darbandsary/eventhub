@@ -1,0 +1,88 @@
+{
+  "operation": "PATCH /events/{event_id}",
+  "method": "PATCH",
+  "path_template": "/events/{event_id}",
+  "fingerprint": "361417c5",
+  "case_id": "vvDwVf",
+  "code_sample": "curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://localhost:8000/events/1",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/events/1",
+      "url_template": "http://localhost:8000/events/{event_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "vvDwVf",
+        "Content-Type": "application/json",
+        "Content-Length": "2"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.24ms",
+          "x-request-id": "749c434c-b277-49ea-ac3b-6efd5b0a3b7b"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00430782197508961,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/events/{event_id}",
+      "path_parameters": {
+        "event_id": 1
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {}
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

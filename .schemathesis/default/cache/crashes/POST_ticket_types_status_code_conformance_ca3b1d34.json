@@ -1,0 +1,91 @@
+{
+  "operation": "POST /ticket-types",
+  "method": "POST",
+  "path_template": "/ticket-types",
+  "fingerprint": "ca3b1d34",
+  "case_id": "ewOiA6",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"event_id\": 0, \"price_cents\": 0, \"sales_ends_at\": \"2000-01-01T00:00:00Z\", \"sales_start_at\": \"2000-01-01T00:00:00Z\", \"total_quantity\": 0}' http://localhost:8000/ticket-types",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/ticket-types",
+      "url_template": "http://localhost:8000/ticket-types",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "ewOiA6",
+        "Content-Type": "application/json",
+        "Content-Length": "137"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.22ms",
+          "x-request-id": "04cd6ede-7486-4890-a5a0-46606780cd3e"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 429\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.004468458006158471,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/ticket-types",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "event_id": 0,
+          "price_cents": 0,
+          "sales_ends_at": "2000-01-01T00:00:00Z",
+          "sales_start_at": "2000-01-01T00:00:00Z",
+          "total_quantity": 0
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

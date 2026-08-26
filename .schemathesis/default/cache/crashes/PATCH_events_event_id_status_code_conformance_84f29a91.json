@@ -1,0 +1,198 @@
+{
+  "operation": "PATCH /events/{event_id}",
+  "method": "PATCH",
+  "path_template": "/events/{event_id}",
+  "fingerprint": "84f29a91",
+  "case_id": "VxlEgP",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' http://localhost:8000/events\ncurl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"ends_at\": \"2026-09-01T19:00:00Z\", \"title\": \"-script.pyw\", \"venue_id\": null, \"starts_at\": \"2026-09-01T19:00:00Z\", \"status\": \"draft\"}' http://localhost:8000/events/1",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/events",
+      "url_template": "http://localhost:8000/events",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "huwihl"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:07:22 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json",
+          "x-response-time": "201.01ms",
+          "x-request-id": "5040e26c-2873-43f1-84e5-b216934bfc79"
+        },
+        "body": "{\"items\":[],\"next_cursor\":null,\"has_more\":false}"
+      },
+      "link": null,
+      "checks": [],
+      "meta": {
+        "generation": {
+          "time": 0.0006280149682424963,
+          "mode": "positive"
+        },
+        "components": {
+          "QUERY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/events",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    },
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/events/1",
+      "url_template": "http://localhost:8000/events/{event_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "VxlEgP",
+        "Content-Type": "application/json",
+        "Content-Length": "133"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:07:24 GMT",
+          "server": "uvicorn",
+          "content-length": "86",
+          "content-type": "application/json",
+          "x-response-time": "804.68ms",
+          "x-request-id": "ac0faf16-86d6-48f3-a20c-41837e14c348"
+        },
+        "body": "{\"code\":\"validation_error\",\"message\":\"ends_at must be after starts_at\",\"details\":null}"
+      },
+      "link": {
+        "operationId": "GET /events -> [200] PatchEventRead -> PATCH /events/{event_id}",
+        "parameters": {
+          "path.event_id": "$response.body#/items/*/id"
+        },
+        "requestBody": {
+          "venue_id": "$response.body#/items/*/venue_id"
+        }
+      },
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.008919052022974938,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "event_id",
+            "resource_name": "EventRead",
+            "resource_field": "id",
+            "source_operation": "GET /events/{event_id}",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "starts_at"
+            ],
+            "type_token": "string",
+            "format_token": "date-time",
+            "pattern_hash": null,
+            "normalized_name": "startsat",
+            "value": "2026-09-01T19:00:00Z",
+            "source_operation": "GET /events/{event_id}"
+          },
+          {
+            "path": [
+              "ends_at"
+            ],
+            "type_token": "string",
+            "format_token": "date-time",
+            "pattern_hash": null,
+            "normalized_name": "endsat",
+            "value": "2026-09-01T19:00:00Z",
+            "source_operation": "GET /events/{event_id}"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/events/{event_id}",
+      "path_parameters": {
+        "event_id": 1
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "ends_at": "2026-09-01T19:00:00Z",
+          "title": "-script.pyw",
+          "venue_id": null,
+          "starts_at": "2026-09-01T19:00:00Z",
+          "status": "draft"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": 0
+    }
+  ]
+}

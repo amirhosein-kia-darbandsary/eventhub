@@ -1,3 +1,5 @@
+from app.core.config import INT32_MAX
+from fastapi import Path
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +26,7 @@ async def create_ticket_type(
 
 
 @ticket_router.get("/{ticket_type_id}", response_model=TicketTypeRead)
-async def get_ticket_type(ticket_type_id: int, db: AsyncSession = Depends(get_db)):
+async def get_ticket_type(ticket_type_id: int = Path(gt=0, lt=INT32_MAX), db: AsyncSession = Depends(get_db)):
     ticket_type = await db.get(TicketType, ticket_type_id)
     if ticket_type is None:
         raise NotFoundError("TicketType", ticket_type_id)

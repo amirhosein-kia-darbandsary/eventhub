@@ -1,0 +1,91 @@
+{
+  "operation": "POST /venue",
+  "method": "POST",
+  "path_template": "/venue",
+  "fingerprint": "652a482c",
+  "case_id": "EdoekO",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"address\": \"Valiasr St, Tehran\", \"capacity\": 500, \"city\": \"Tehran\", \"name\": \"Tehran Grand Hall\"}' http://localhost:8000/venue",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/venue",
+      "url_template": "http://localhost:8000/venue",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "EdoekO",
+        "Content-Type": "application/json",
+        "Content-Length": "97"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:02 GMT",
+          "server": "uvicorn",
+          "content-length": "81",
+          "content-type": "application/json",
+          "x-response-time": "0.91ms",
+          "x-request-id": "7989b656-ab4b-430f-ac22-48c73b61c72d"
+        },
+        "body": "{\"code\":\"invalid_token\",\"message\":\"Missing Authorization Header.\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.8786988221108913e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {}
+        }
+      },
+      "path": "/venue",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "address": "Valiasr St, Tehran",
+          "capacity": 500,
+          "city": "Tehran",
+          "name": "Tehran Grand Hall"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

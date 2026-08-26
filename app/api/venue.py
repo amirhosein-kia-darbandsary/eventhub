@@ -1,3 +1,5 @@
+from fastapi import Path
+from app.core.config import INT32_MAX
 from fastapi import APIRouter, status, Depends, Query
 from app.schemas.venue import *
 from app.db.session import get_db
@@ -23,7 +25,7 @@ async def create_venue(payload: VenueCreate,
 
 
 @venue_router.get("/{venue_id}", response_model=VenueRead)
-async def get_venue(venue_id: int, db: AsyncSession = Depends(get_db)):
+async def get_venue(venue_id: int = Path(gt=0, lt=INT32_MAX), db: AsyncSession = Depends(get_db)):
     venue = await db.get(Venue, venue_id)
     if venue is None:
         raise NotFoundError("Venue", venue_id)

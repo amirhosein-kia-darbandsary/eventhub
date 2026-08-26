@@ -1,0 +1,128 @@
+{
+  "operation": "PATCH /venue/{venue_id}",
+  "method": "PATCH",
+  "path_template": "/venue/{venue_id}",
+  "fingerprint": "caf54548",
+  "case_id": "IhLxSF",
+  "code_sample": "curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"\\u00e0\\u001d{\\ud84a\\udfd6\\ud85a\\udf4b\": {\"\\u00d6\\u001e8\\u00dc\\u008cqF\": -203}, \"\\u008a\\u0005\\u009f.\": [75106992, {\"\\ud92d\\uddac\\u00f5\\u00e7/a\\u00d3\\u00ec\\\"\\u001c\\u0003\": \"M\\u00df\", \"\\u00b1\\udaae\\udc51h\\u00c1\\u0015Q\\u0092\\u0088\": 23999, \"\\ud80b\\udce1\\u0087\\udb09\\udc91\\u00eb\\u00e2\\u0086}p\\u00e0\\u00a9\": \"\\u001f\"}, \"\"], \"\": [-121725555], \"address\": null, \"name\": \"\\u00c2\\ud993\\udcff\\u00db\\u00ca\\u00eb\", \"city\": null, \"capacity\": 500}' http://localhost:8000/venue/7",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/venue/7",
+      "url_template": "http://localhost:8000/venue/{venue_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "IhLxSF",
+        "Content-Type": "application/json",
+        "Content-Length": "433"
+      },
+      "response": {
+        "status_code": 409,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:06:59 GMT",
+          "server": "uvicorn",
+          "content-length": "118",
+          "content-type": "application/json",
+          "x-response-time": "1205.09ms",
+          "x-request-id": "caf27367-9384-4254-906d-cdd14ea35039"
+        },
+        "body": "{\"code\":\"conflict\",\"message\":\"This operation violates a database constraint (e.g. a duplicate value).\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 409\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.009703442978207022,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "venue_id",
+            "resource_name": "VenueRead",
+            "resource_field": "id",
+            "source_operation": "GET /venue",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "capacity"
+            ],
+            "type_token": "integer",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "capacity",
+            "value": 500,
+            "source_operation": "POST /venue"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/venue/{venue_id}",
+      "path_parameters": {
+        "venue_id": 7
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "\u00e0\u001d{\ud84a\udfd6\ud85a\udf4b": {
+            "\u00d6\u001e8\u00dc\u008cqF": -203
+          },
+          "\u008a\u0005\u009f.": [
+            75106992,
+            {
+              "\ud92d\uddac\u00f5\u00e7/a\u00d3\u00ec\"\u001c\u0003": "M\u00df",
+              "\u00b1\udaae\udc51h\u00c1\u0015Q\u0092\u0088": 23999,
+              "\ud80b\udce1\u0087\udb09\udc91\u00eb\u00e2\u0086}p\u00e0\u00a9": "\u001f"
+            },
+            ""
+          ],
+          "": [
+            -121725555
+          ],
+          "address": null,
+          "name": "\u00c2\ud993\udcff\u00db\u00ca\u00eb",
+          "city": null,
+          "capacity": 500
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

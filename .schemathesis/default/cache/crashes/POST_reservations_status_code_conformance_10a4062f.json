@@ -1,0 +1,85 @@
+{
+  "operation": "POST /reservations",
+  "method": "POST",
+  "path_template": "/reservations",
+  "fingerprint": "10a4062f",
+  "case_id": "ySu6yT",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"quantity\": 2, \"ticket_type_id\": 0}' http://localhost:8000/reservations",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/reservations",
+      "url_template": "http://localhost:8000/reservations",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "ySu6yT",
+        "Content-Type": "application/json",
+        "Content-Length": "36"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:05:54 GMT",
+          "server": "uvicorn",
+          "content-length": "78",
+          "content-type": "application/json",
+          "x-response-time": "1001.13ms",
+          "x-request-id": "d3d52ebf-137a-4b1f-8978-41a28f6053a4"
+        },
+        "body": "{\"code\":\"not_found\",\"message\":\"TicketType with id=0 not found\",\"details\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.001766713976394385,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "examples",
+          "data": {
+            "type": "ExamplesPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/reservations",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "quantity": 2,
+          "ticket_type_id": 0
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

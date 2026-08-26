@@ -1,0 +1,100 @@
+{
+  "operation": "POST /checkout/{reservation_id}",
+  "method": "POST",
+  "path_template": "/checkout/{reservation_id}",
+  "fingerprint": "6e48a5c8",
+  "case_id": "gQUoIs",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' http://localhost:8000/checkout/%C2%B8wu%F2%9E%B7%AA%C3%AD%C2%A5%F3%AD%AB%92W%27%F3%83%A1%8B%C3%B4%F2%A1%94%93%C2%92gT%C3%AE3%5E%C2%B1%C2%9F",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/checkout/%C2%B8wu%F2%9E%B7%AA%C3%AD%C2%A5%F3%AD%AB%92W%27%F3%83%A1%8B%C3%B4%F2%A1%94%93%C2%92gT%C3%AE3%5E%C2%B1%C2%9F",
+      "url_template": "http://localhost:8000/checkout/{reservation_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "gQUoIs",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:14 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.38ms",
+          "x-request-id": "4438c32c-9722-4b15-bb36-c9b5922c822b"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "negative_data_rejection",
+          "status": "failure",
+          "message": "API accepted schema-violating request\n\nInvalid data should have been rejected\nExpected: 400, 401, 403, 404, 405, 406, 409, 422, 428, 5xx\nInvalid component: parameter `reservation_id` in path - violates `type` at /properties/reservation_id (was integer, became string)"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0018007929902523756,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "negative"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "violates `type` at /properties/reservation_id (was integer, became string)",
+            "location": "/properties/reservation_id",
+            "parameter": "reservation_id",
+            "parameter_location": "PATH",
+            "mutations": [
+              {
+                "path": [
+                  "reservation_id"
+                ],
+                "schema_pointer": "/properties/reservation_id",
+                "channel": "schema",
+                "operator": "change_type",
+                "keywords": [
+                  "type"
+                ],
+                "parameter": "reservation_id",
+                "original_value": "integer",
+                "new_value": "string"
+              }
+            ]
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/checkout/{reservation_id}",
+      "path_parameters": {
+        "reservation_id": "%C2%B8wu%F2%9E%B7%AA%C3%AD%C2%A5%F3%AD%AB%92W%27%F3%83%A1%8B%C3%B4%F2%A1%94%93%C2%92gT%C3%AE3%5E%C2%B1%C2%9F"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

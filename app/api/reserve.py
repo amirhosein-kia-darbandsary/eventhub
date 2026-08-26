@@ -1,3 +1,5 @@
+from fastapi import Path
+from app.core.config import INT32_MAX
 from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
@@ -27,7 +29,7 @@ async def create_reservation(payload: ReservationCreate,
 @reserve_router.post('/{reservation_id}/cancel',
                      response_model=ReservationRead,
                      status_code=status.HTTP_200_OK)
-async def cancel_reservation(reservation_id: int,
+async def cancel_reservation(reservation_id: int = Path(gt=0, lt=INT32_MAX),
                              db: AsyncSession = Depends(get_db),
                              user: User = Depends(get_current_user)):
 
@@ -36,8 +38,8 @@ async def cancel_reservation(reservation_id: int,
 
 
 @reserve_router.get('', response_model=list[ReservationRead], status_code=status.HTTP_200_OK)
-async def get_user_reservation(db: AsyncSession = Depends(get_db), 
+async def get_user_reservation(db: AsyncSession = Depends(get_db),
                                user: User = Depends(get_current_user)):
-    stmt = select(Reservation).where(Reservation.user_id==user.id)
+    stmt = select(Reservation).where(Reservation.user_id == user.id)
     result = await db.execute(stmt)
     return result.scalars()

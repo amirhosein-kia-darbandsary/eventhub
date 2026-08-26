@@ -10,14 +10,15 @@ from sqlalchemy import select
 from app.exceptions.common import NotFoundError
 from app.exceptions.common import ConflictError
 from app.services.payment_service import initiate_payment, PaymentProviderError
-
+from fastapi import Path
+from app.core.config import INT32_MAX
 
 checkout_router = APIRouter(prefix="/checkout", tags=['checkout'])
 
 
 @checkout_router.post('/{reservation_id}', status_code=status.HTTP_200_OK)
 async def checkout_api(
-    reservation_id: int,
+    reservation_id: int = Path(gt=0, lt=INT32_MAX),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):

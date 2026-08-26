@@ -1,0 +1,107 @@
+{
+  "operation": "PATCH /venue/{venue_id}",
+  "method": "PATCH",
+  "path_template": "/venue/{venue_id}",
+  "fingerprint": "679630dc",
+  "case_id": "7fjDYr",
+  "code_sample": "curl -X PATCH -H 'Content-Type: application/json' -d '{\"name\": \"0\", \"address\": \"0\", \"city\": \"0\", \"capacity\": 1}' http://localhost:8000/venue/7",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/venue/7",
+      "url_template": "http://localhost:8000/venue/{venue_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "7fjDYr",
+        "Content-Type": "application/json",
+        "Content-Length": "57"
+      },
+      "response": {
+        "status_code": 429,
+        "headers": {
+          "date": "Wed, 26 Aug 2026 14:04:13 GMT",
+          "server": "uvicorn",
+          "retry-after": "60",
+          "content-length": "113",
+          "content-type": "application/json",
+          "x-response-time": "0.30ms",
+          "x-request-id": "9cc7567e-a4b1-4f89-8acd-e4dd93575736"
+        },
+        "body": "{\"code\":\"rate_limited\",\"message\":\"Too many requests. Limit is 100 per 60s.\",\"details\":{\"retry_after_seconds\":60}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 429\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.906696707010269e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "venue_id",
+            "resource_name": "VenueRead",
+            "resource_field": "id",
+            "source_operation": "POST /venue",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "venue_id": 7
+          },
+          "HEADER": {}
+        }
+      },
+      "path": "/venue/{venue_id}",
+      "path_parameters": {
+        "venue_id": "7"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "name": "0",
+          "address": "0",
+          "city": "0",
+          "capacity": 1
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}
