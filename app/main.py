@@ -64,9 +64,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(TimingMiddleware)
     app.add_middleware(RequestIDMiddleware)
 
-    @app.get("/admin/ping")
-    def admin_ping(user=Depends(require_role("admin"))):
-        return {"message": f"hello admin {user.email}"}
 
     @app.get("/healthz")
     def healthz():

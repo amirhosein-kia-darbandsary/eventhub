@@ -47,12 +47,17 @@ def register_exception_handlers(app: FastAPI) -> None:
         return _error_response("invalid_input", str(exc), status.HTTP_400_BAD_REQUEST)
 
     @app.exception_handler(RequestValidationError)
-    async def handle_pydantic_validation(request: Request, exc: RequestValidationError):
+    async def handle_pydantic_validation(
+        request: Request,
+        exc: RequestValidationError,
+    ):
         return _error_response(
-            "request_validation_error",
+            "invalid_input",
             "Request validation failed",
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            details={"errors": jsonable_encoder(exc.errors())},
+            details={
+                "errors": jsonable_encoder(exc.errors()),
+            },
         )
 
     @app.exception_handler(IntegrityError)
@@ -62,3 +67,4 @@ def register_exception_handlers(app: FastAPI) -> None:
             "This operation violates a database constraint (e.g. a duplicate value).",
             status.HTTP_409_CONFLICT
         )
+    
