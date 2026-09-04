@@ -1,3 +1,6 @@
+from app.core.security import hash_api_key
+from app.models.partener_key import PartnerApiKey
+from fastapi import Header
 import jwt
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -53,4 +56,19 @@ def require_role(role: str):
     return _check
 
 
+async def get_current_partner(
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+    db: AsyncSession = Depends(get_db),
+) -> PartnerApiKey:
+    if x_api_key is None:
+        raise InvalidTokenError("Missing X-API-Key header")
 
+    hashed_api_key = hash_api_key(x_api_key)
+    stmt = select(PartnerApiKey).where(PartnerApiKey.hashed_key == hashed_api_key)
+    
+    result = await db.execute(stmt)
+    api_key_record = result.scalar_one_or_none()
+    if api_key_record is None:
+        raise InvalidTokenError("Wrong Api key")
+    return api_key_record
+    

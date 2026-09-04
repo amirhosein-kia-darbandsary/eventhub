@@ -1,3 +1,4 @@
+import hashlib
 from app.core.config import get_settings
 
 from pathlib import Path
@@ -5,6 +6,8 @@ import bcrypt
 import datetime as dt
 import uuid
 import jwt
+
+import secrets
 
 _settings = get_settings()
 _PRIVATE_KEY = Path(_settings.jwt.private_key_path).read_bytes()
@@ -54,3 +57,15 @@ def create_refresh_token(subject: str, role: str) -> str:
 
 def decode_token(token: str) -> dict:
     return jwt.decode(token, _PUBLICK_KEY, algorithms=[ALGORITHM])
+
+
+def generate_api_key():
+    return f"eh_{secrets.token_urlsafe(32)}"
+
+
+def hash_api_key(raw_key: str):
+    return hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
+
+
+def verify_api_key(raw_key: str, hashed_key: str):
+    return verify_password(raw_key, hashed_key)

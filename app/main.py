@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare, RedisRateLimitMiddleware
 from app.core.error_handlers import register_exception_handlers
 from app.core.redis_client_ import redis_client
-
+from app.api.partner import partner_router
 # from app.core.setup_dramiq import dramatiq
 
 
@@ -47,13 +47,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(reserve_router)
     app.include_router(checkout_router)
     app.include_router(webhook_router)
+    app.include_router(partner_router)
 
     # RequestID  →  Timing  →  CORS  →  RateLimit  →  GZip  →  Routers
     # Don't Forget boy :) startlet make these things in the reveser :)
     # so you need to add them as reverse .
     # inner middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
-    app.add_middleware(RedisRateLimitMiddleware, 
+    app.add_middleware(RedisRateLimitMiddleware,
                        redis_client=redis_client,
                        max_requests=10, window_seconds=60)
     app.add_middleware(
