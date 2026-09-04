@@ -13,8 +13,10 @@ from app.core.middleware.request_id_middleware import RequestIDMiddleware
 from app.core.middleware.timing_middleware import TimingMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare
+from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare, RedisRateLimitMiddleware
 from app.core.error_handlers import register_exception_handlers
+from app.core.redis_client_ import redis_client
+
 # from app.core.setup_dramiq import dramatiq
 
 
@@ -49,11 +51,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # RequestID  →  Timing  →  CORS  →  RateLimit  →  GZip  →  Routers
     # Don't Forget boy :) startlet make these things in the reveser :)
     # so you need to add them as reverse .
-
     # inner middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
-    # app.add_middleware(RateLimitMiddleWare,
-    #                    max_requests=100, window_seconds=60)
+    app.add_middleware(RedisRateLimitMiddleware, 
+                       redis_client=redis_client,
+                       max_requests=10, window_seconds=60)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors.allow_origins,
@@ -63,7 +65,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.add_middleware(TimingMiddleware)
     app.add_middleware(RequestIDMiddleware)
-
 
     @app.get("/healthz")
     def healthz():

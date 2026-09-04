@@ -8,7 +8,7 @@ from app.exceptions.auth_exception import (
     InvalidTokenError
 )
 from app.exceptions.common import *
-
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.schemas.common import ErrorResponse
 
 
@@ -68,3 +68,11 @@ def register_exception_handlers(app: FastAPI) -> None:
             status.HTTP_409_CONFLICT
         )
     
+    @app.exception_handler(StarletteHTTPException)
+    async def handle_raw_http_exception(request: Request, exc: StarletteHTTPException):
+
+        return _error_response(
+            code="http_error",
+            message=str(exc.detail),
+            status_code=exc.status_code,
+        )
