@@ -13,7 +13,7 @@ from app.models.partener_key import PartnerApiKey
 from app.models.user import User
 from app.exceptions.common import NotFoundError
 
-from schemas.parnter import *
+from app.schemas.parnter import *
 from app.core.security import generate_api_key, hash_api_key
 partner_router = APIRouter(prefix="/api/v1/partners", tags=['partners'])
 

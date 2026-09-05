@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.core.config import Settings
 from app.db.base import Base
 from sqlalchemy.pool import NullPool
-from app.models import event, ticket_type, user, venue, reserve
+from app.models import event, ticket_type, user, venue, reserve, partener_key, webhook
 # Just for register in BaseModel when we want to run the tests in single state not all of
 # them together when you run for example just constraint test alone you'll get an error
 # about Undefined Table Error that means in the Base.metadata.create_all python can't figure
@@ -127,6 +127,7 @@ async def concurrency_client():
         await conn.execute(text("DELETE FROM users"))
         await conn.commit()
 
+
 @pytest_asyncio.fixture
 async def concurrency_admin_headers(concurrency_client):
     from app.core.security import hash_password
@@ -140,11 +141,26 @@ async def concurrency_admin_headers(concurrency_client):
             role=UserRole.admin,
         )
         session.add(admin)
-        await session.commit()  
+        await session.commit()
 
     login_response = await concurrency_client.post(
         "/auth/login",
-        json={"email": "concurrency-admin@eventhub.dev", "password": "adminpass123"},
+        json={"email": "concurrency-admin@eventhub.dev",
+              "password": "adminpass123"},
     )
     token = login_response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest_asyncio.fixture
+async def partner_headers(db_session):
+
+    from app.core.security import generate_api_key, hash_api_key
+    from app.models.partener_key import PartnerApiKey
+
+    raw_key = generate_api_key()
+    partner = PartnerApiKey(partner_name="Test Partner",
+                            hashed_key=hash_api_key(raw_key))
+    db_session.add(partner)
+    await db_session.flush()
+    return {"X-API-Key": raw_key}

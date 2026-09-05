@@ -41,12 +41,12 @@ class CORSSettings(BaseModel):
 
 
 class PaymentProvider(BaseModel):
-    url: str
+    url: str = None
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='.env',
+        env_file='.env',    
         env_nested_delimiter="__",
         extra='forbid'
     )
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     cors: CORSSettings = CORSSettings()
     postgres: PostgresSettings
     redis: RedisSettings
-    payment: PaymentProvider
+    payment: PaymentProvider = PaymentProvider()
 
 
 @lru_cache

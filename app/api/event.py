@@ -93,6 +93,6 @@ async def update_event(
     await db.commit()
     await db.refresh(event)
 
-    await invalidate_cache(redis_client, f"event:{event_id}")
+    # await invalidate_cache(redis_client, f"event:{event_id}")
 
     return event
