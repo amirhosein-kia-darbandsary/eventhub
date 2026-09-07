@@ -40,6 +40,9 @@ class CORSSettings(BaseModel):
     allow_headers: list[str] = ["*"]
 
 
+class LogSetttings(BaseModel):
+    debug: bool = None
+
 class PaymentProvider(BaseModel):
     url: str = None
 
@@ -60,6 +63,7 @@ class Settings(BaseSettings):
     postgres: PostgresSettings
     redis: RedisSettings
     payment: PaymentProvider = PaymentProvider()
+    logger: LogSetttings = LogSetttings()
 
 
 @lru_cache

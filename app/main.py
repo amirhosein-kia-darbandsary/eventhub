@@ -1,3 +1,4 @@
+import structlog
 from fastapi import FastAPI, Depends
 from app.api.deps import require_role
 
@@ -13,17 +14,15 @@ from app.core.middleware.request_id_middleware import RequestIDMiddleware
 from app.core.middleware.timing_middleware import TimingMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.middleware.rate_limit_middleware import RateLimitMiddleWare, RedisRateLimitMiddleware
+from app.core.middleware.rate_limit_middleware import RedisRateLimitMiddleware
 from app.core.error_handlers import register_exception_handlers
 from app.core.redis_client_ import redis_client
 from app.api.partner import partner_router
-# from app.core.setup_dramiq import dramatiq
 
+from app.core.logging_info import configure_logging
 
-import logging
-
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(name)s %(levelname)s %(message)s")
+configure_logging(json_logs=not get_settings().debug)
+log = structlog.get_logger()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -69,6 +68,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/healthz")
     def healthz():
+        log.info("healthz_checked")
         """
         TODO: In here we will add db and redis connection liveness/connections to be correct
         """
