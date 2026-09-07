@@ -1,5 +1,8 @@
 import contextvars
 import uuid
+import structlog
+log = structlog.get_logger()
+
 request_id_ctx_var: contextvars.ContextVar[str] = contextvars.ContextVar(
     "request_id", default="-")
 
@@ -19,6 +22,7 @@ class RequestIDMiddleware:
         request_id = incoming.decode(
             "utf-8") if incoming else str(uuid.uuid4())
         token = request_id_ctx_var.set(request_id)
+        structlog.contextvars.bind_contextvars(request_id=request_id)
 
         async def send_wrapper(message):
             if message["type"] == "http.response.start":
@@ -31,3 +35,4 @@ class RequestIDMiddleware:
             await self.app(scope, receive, send_wrapper)
         finally:
             request_id_ctx_var.reset(token)
+            structlog.contextvars.clear_contextvars()

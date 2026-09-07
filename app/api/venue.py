@@ -1,3 +1,6 @@
+import structlog
+log = structlog.get_logger()
+
 from fastapi import Path
 from app.core.config import INT32_MAX
 from fastapi import APIRouter, status, Depends, Query
@@ -20,7 +23,7 @@ async def create_venue(payload: VenueCreate,
     db.add(venue)
     await db.commit()
     await db.refresh(venue)
-
+    log.info("venue_created", venue_id=venue.id, venue_name=venue.name)  # ← این خط
     return venue
 
 
@@ -58,4 +61,5 @@ async def list_venues(db: AsyncSession = Depends(get_db), limit: int = Query(def
                                                                              lt=100)):
     stm = Select(Venue).order_by(Venue.id.asc()).limit(limit)
     result = await db.execute(stm)
+    log.info("venue_listed", result=list(result.scalars().all()))
     return list(result.scalars().all())
