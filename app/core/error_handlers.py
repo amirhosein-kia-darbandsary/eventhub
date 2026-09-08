@@ -10,6 +10,7 @@ from app.exceptions.auth_exception import (
 from app.exceptions.common import *
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.schemas.common import ErrorResponse
+from app.core.metrics import reservation_conflicts_total
 
 
 def _error_response(code: str, message: str, status_code: int, details: dict | None = None) -> JSONResponse:
@@ -24,6 +25,7 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(ConflictError)
     async def handle_conflict(request: Request, exc: ConflictError):
+        reservation_conflicts_total.inc(1)
         return _error_response("conflict", str(exc), status.HTTP_409_CONFLICT)
 
     @app.exception_handler(ValidationAppError)
@@ -67,7 +69,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             "This operation violates a database constraint (e.g. a duplicate value).",
             status.HTTP_409_CONFLICT
         )
-    
+
     @app.exception_handler(StarletteHTTPException)
     async def handle_raw_http_exception(request: Request, exc: StarletteHTTPException):
 
