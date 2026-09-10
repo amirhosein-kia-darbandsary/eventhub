@@ -18,7 +18,7 @@ from app.core.config import Settings, get_settings
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from starlette.responses import Response
 from fastapi import FastAPI
-
+from app.core.middleware.metrics_middelware import MetricsMiddleware
 import structlog
 from app.core.tracing_config import configure_tracing
 
@@ -64,6 +64,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=settings.cors.allow_methods,
         allow_headers=settings.cors.allow_headers,
     )
+    app.add_middleware(MetricsMiddleware)
     app.add_middleware(TimingMiddleware)
     app.add_middleware(RequestIDMiddleware)
 
