@@ -14,3 +14,14 @@ def configure_tracing(app) -> None:
     FastAPIInstrumentor.instrument_app(app)
     SQLAlchemyInstrumentor().instrument()
     RedisInstrumentor().instrument()
+    
+from opentelemetry import propagate
+
+def inject_trace_context() -> dict:
+    carrier: dict = {}
+    propagate.inject(carrier)
+    return carrier
+
+
+def extract_trace_context(carrier: dict):
+    return propagate.extract(carrier)

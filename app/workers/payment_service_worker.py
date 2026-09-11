@@ -7,13 +7,17 @@ from app.core.setup_dramiq import redis_broker  # noqa: F401
 from app.db.worker_session import worker_async_session_factory
 from app.models.webhook import WebHookEvent, WebHookEventStatus
 from app.services.webhook_service import process_payment_webhook_logic
+from app.core.tracing_config import extract_trace_context
+from opentelemetry import trace
 
 logger = logging.getLogger("eventhub.webhooks")
-
+tracer = trace.get_tracer("eventhub.worker")
 
 @dramatiq.actor(max_retries=3, min_backoff=1000)
-def process_payment_webhook(webhook_event_id: str) -> None:
-    asyncio.run(_run(webhook_event_id))
+def process_payment_webhook(webhook_event_id: str, trace_context: dict) -> None:
+    ctx = extract_trace_context(trace_context)
+    with tracer.start_as_current_span("process_payment_webhook", context=ctx):
+        asyncio.run(_run(webhook_event_id))
 
 
 async def _run(webhook_event_id: str) -> None:

@@ -6,7 +6,8 @@ from fastapi import status, Request, Depends
 from app.api.deps import get_db
 import json
 from app.workers.payment_service_worker import process_payment_webhook
-
+from app.core.tracing_config import inject_trace_context
+from opentelemetry import trace
 
 webhook_router = APIRouter(prefix='/webhooks', tags=['webhook'])
 
@@ -23,6 +24,6 @@ async def webhook(request: Request, db: AsyncSession = Depends(get_db)):
     except IntegrityError:
         await db.rollback()
         return {"status": "already_received"}
-    
-    process_payment_webhook.send(str(event.id))
+    trace_context = inject_trace_context()
+    process_payment_webhook.send(str(event.id), trace_context)
     return {"status": "received"}
