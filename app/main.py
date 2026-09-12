@@ -20,10 +20,26 @@ from starlette.responses import Response
 from fastapi import FastAPI
 from app.core.middleware.metrics_middelware import MetricsMiddleware
 import structlog
+import asyncio
 from app.core.tracing_config import configure_tracing
+from app.db.session import engine as db_engine
+from app.core.redis_client_ import redis_client
+from contextlib import asynccontextmanager
 
 configure_logging(json_logs=not get_settings().debug)
 log = structlog.get_logger()
+
+shutdown_event = asyncio.Event()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start Secion
+    yield
+    shutdown_event.set()
+    # Finish Section
+    await asyncio.sleep(15)
+    await db_engine.dispose()
+    await redis_client.aclose()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -37,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
         debug=settings.debug,
+        lifespan=lifespan
     )
     configure_tracing(app)
     register_exception_handlers(app)
