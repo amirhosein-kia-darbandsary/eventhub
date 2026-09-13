@@ -19,23 +19,33 @@ from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from starlette.responses import Response
 from fastapi import FastAPI
 from app.core.middleware.metrics_middelware import MetricsMiddleware
+from app.core.metrics import db_pool_checked_out, db_pool_size
 import structlog
 import asyncio
 from app.core.tracing_config import configure_tracing
 from app.db.session import engine as db_engine
 from app.core.redis_client_ import redis_client
 from contextlib import asynccontextmanager
+from fastapi import HTTPException
+from sqlalchemy import text
 
 configure_logging(json_logs=not get_settings().debug)
 log = structlog.get_logger()
 
 shutdown_event = asyncio.Event()
 
+async def _update_pool_metrics_periodically():
+    pool = db_engine.pool
+    db_pool_checked_out.set(pool.checkedout())
+    await asyncio.sleep(15)
+    
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start Secion
+    metrics_task = asyncio.create_task(_update_pool_metrics_periodically())
     yield
     shutdown_event.set()
+    metrics_task.cancel()
     # Finish Section
     await asyncio.sleep(15)
     await db_engine.dispose()
@@ -97,7 +107,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """
         return {"status": "ok"}
 
-    return app
+    
+    @app.get("/readyz")
+    async def readyz():
+
+        if shutdown_event.is_set():
+            raise HTTPException(status_code=503, detail="Server is shutting down")
+
+        try:
+            async with db_engine.connect() as conn:
+                await asyncio.wait_for(
+                    conn.execute(text("SELECT 1")),
+                    timeout=2
+                )
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                status_code=503,
+                detail={"database": "unreachable"}
+            )
+
+        try:
+            await asyncio.wait_for(
+                redis_client.ping(),
+                timeout=2
+            )
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                status_code=503,
+                detail={"redis": "unreachable"}
+            )
+
+    return app    
 
 
 app = create_app()
+
