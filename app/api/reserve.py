@@ -10,6 +10,8 @@ from app.services.reservation_service import create_reservation_service, cancel_
 from app.models.user import User
 from app.models.reserve import Reservation
 from sqlalchemy import select
+from app.services.feature_flag_service import is_enabled
+
 reserve_router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 

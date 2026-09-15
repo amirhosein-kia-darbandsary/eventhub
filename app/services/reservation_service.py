@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from app.services.ticket_type_service import calculate_available
 from datetime import datetime, timedelta, timezone
 import logging
+from app.services.feature_flag_service import is_enabled
 
 
 logger = logging.Logger("eventhub-logger")
@@ -42,6 +43,14 @@ async def create_reservation_service(db: AsyncEngine,
                                     ticket_type.reserved_quantity,
                                     ticket_type.sold_quantity)
     if quantity > available:
+        waitlist_active = await is_enabled("waitlist_enabled", {"user_id": str(user_id)})
+        if waitlist_active:
+            # به‌جای ConflictError، کاربر رو به یک لیست انتظار اضافه کن
+            # (پیاده‌سازی کامل لیست انتظار جزو این هفته نیست -- فقط نشون
+            # می‌دیم flag چطور مسیر کد رو عوض می‌کنه)
+            raise ConflictError(
+                "Sold out, but you've been added to the waitlist")
+
         raise ConflictError(f"Not enough tickets available (requested {quantity},\
                             available {available}")
 
@@ -71,7 +80,7 @@ async def create_reservation_service(db: AsyncEngine,
     return reservation
 
 
-async def cancel_reservation_service(db: AsyncSession, reservation_id:int, user_id: uuid.UUID) -> Reservation:
+async def cancel_reservation_service(db: AsyncSession, reservation_id: int, user_id: uuid.UUID) -> Reservation:
     result = await db.execute(
         select(Reservation).where(Reservation.id ==
                                   reservation_id).with_for_update()
@@ -99,10 +108,12 @@ async def cancel_reservation_service(db: AsyncSession, reservation_id:int, user_
     await db.refresh(reservation)
     return reservation
 
+
 async def confirm_reservation(db: AsyncSession, reservation_id: int, user_id: uuid.UUID) -> Reservation:
-    
+
     result = await db.execute(
-        select(Reservation).where(Reservation.id == reservation_id).with_for_update()
+        select(Reservation).where(Reservation.id ==
+                                  reservation_id).with_for_update()
     )
     reservation = result.scalar_one_or_none()
     if reservation is None:
@@ -115,9 +126,10 @@ async def confirm_reservation(db: AsyncSession, reservation_id: int, user_id: uu
 
 
 async def confirm_reservation_internal(db: AsyncSession, reservation_id: int) -> Reservation:
-    
+
     result = await db.execute(
-        select(Reservation).where(Reservation.id == reservation_id).with_for_update()
+        select(Reservation).where(Reservation.id ==
+                                  reservation_id).with_for_update()
     )
     reservation = result.scalar_one_or_none()
     if reservation is None:
@@ -127,15 +139,17 @@ async def confirm_reservation_internal(db: AsyncSession, reservation_id: int) ->
 
 
 async def _confirm_reservation_core(db: AsyncSession, reservation: Reservation) -> Reservation:
-   
+
     if reservation.status != ReservationStatus.pending:
-        raise ConflictError(f"Cannot confirm a reservation with status '{reservation.status.value}'")
+        raise ConflictError(
+            f"Cannot confirm a reservation with status '{reservation.status.value}'")
 
     if reservation.expires_at < datetime.now(timezone.utc):
         raise ConflictError("This reservation has expired")
 
     tt_result = await db.execute(
-        select(TicketType).where(TicketType.id == reservation.ticket_type_id).with_for_update()
+        select(TicketType).where(TicketType.id ==
+                                 reservation.ticket_type_id).with_for_update()
     )
     ticket_type = tt_result.scalar_one()
 
@@ -146,6 +160,7 @@ async def _confirm_reservation_core(db: AsyncSession, reservation: Reservation) 
     await db.commit()
     await db.refresh(reservation)
     return reservation
+
 
 async def cleanup_expired_reservations(db: AsyncSession) -> int:
 
@@ -160,7 +175,8 @@ async def cleanup_expired_reservations(db: AsyncSession) -> int:
     count = 0
     for reservation in expired_reservations:
         tt_result = await db.execute(
-            select(TicketType).where(TicketType.id == reservation.ticket_type_id).with_for_update()
+            select(TicketType).where(TicketType.id ==
+                                     reservation.ticket_type_id).with_for_update()
         )
         ticket_type = tt_result.scalar_one()
         ticket_type.reserved_quantity -= reservation.quantity
