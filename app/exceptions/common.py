@@ -16,3 +16,10 @@ class ConflictError(DomainError):
 class ValidationAppError(DomainError):
     def __init__(self, detail: str = "Some thing wrong happened"):
         super().__init__(detail)
+
+
+class InternalError(DomainError):
+    def __init__(self, detail: str = "Some thing wrong happened"):
+        super().__init__(detail)
+
+    

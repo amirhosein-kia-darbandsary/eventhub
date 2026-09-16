@@ -48,6 +48,10 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def handle_value_error(request: Request, exc: ValueError):
         return _error_response("invalid_input", str(exc), status.HTTP_400_BAD_REQUEST)
 
+    @app.exception_handler(InternalError)
+    async def handle_interval_error(request: Request, exc: ValueError):
+        return _error_response("InternalError", str(exc), status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @app.exception_handler(RequestValidationError)
     async def handle_pydantic_validation(
         request: Request,
