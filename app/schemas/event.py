@@ -5,7 +5,7 @@ from app.models.event import EventStatus
 
 
 class BaseEvent(BaseModel):
-    title: str = Field(examples=['Dinner party'])
+    title: str = Field(examples=['Dinner party'], min_length=5, max_length=256)
     starts_at: datetime = Field(examples=["2026-09-01T19:00:00Z"])
     ends_at: datetime = Field(examples=["2026-09-01T23:00:00Z"])
 
