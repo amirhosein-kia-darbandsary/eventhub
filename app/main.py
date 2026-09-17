@@ -19,6 +19,7 @@ from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from starlette.responses import Response
 from fastapi import FastAPI
 from app.core.middleware.metrics_middelware import MetricsMiddleware
+from app.core.middleware.security_middelware import SecurityHeadersMiddleware
 from app.core.metrics import db_pool_checked_out, db_pool_size
 import structlog
 import asyncio
@@ -81,6 +82,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # so you need to add them as reverse .
     # inner middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
+    app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(RedisRateLimitMiddleware,
                        redis_client=redis_client,
                        max_requests=10, window_seconds=60)
