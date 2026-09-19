@@ -11,9 +11,13 @@ from app.services.ticket_type_service import calculate_available
 from datetime import datetime, timedelta, timezone
 import logging
 from app.services.feature_flag_service import is_enabled
+from app.core.cache import redis_client
+from app.core.logging_info import configure_logging
+import structlog
+from app.core.config import get_settings
 
-
-logger = logging.Logger("eventhub-logger")
+configure_logging(json_logs=not get_settings().debug)
+log = structlog.get_logger()
 
 DEFAULT_TTL_MINUTES = 15
 
@@ -43,11 +47,9 @@ async def create_reservation_service(db: AsyncEngine,
                                     ticket_type.reserved_quantity,
                                     ticket_type.sold_quantity)
     if quantity > available:
-        waitlist_active = await is_enabled("waitlist_enabled", {"user_id": str(user_id)})
+        waitlist_active = await is_enabled(redis_client, "waitlist_enabled", {"user_id": str(user_id)})
         if waitlist_active:
-            # به‌جای ConflictError، کاربر رو به یک لیست انتظار اضافه کن
-            # (پیاده‌سازی کامل لیست انتظار جزو این هفته نیست -- فقط نشون
-            # می‌دیم flag چطور مسیر کد رو عوض می‌کنه)
+
             raise ConflictError(
                 "Sold out, but you've been added to the waitlist")
 
@@ -185,5 +187,5 @@ async def cleanup_expired_reservations(db: AsyncSession) -> int:
         count += 1
 
     await db.commit()
-    logger.info(f"[CLEANUP] Expired {count} stale reservations")
+    log.info(f"[CLEANUP] Expired {count} stale reservations")
     return count

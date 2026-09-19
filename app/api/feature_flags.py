@@ -8,6 +8,8 @@ from app.models.webhook import FeatureFlag
 from sqlalchemy import select
 from app.db.session import get_db
 from app.exceptions.common import NotFoundError
+from app.exceptions.common import InternalError
+from app.core.cache import redis_client
 
 
 feature_router = APIRouter(prefix="/admin/feature-flags", tags=['features'])
@@ -40,6 +42,7 @@ async def update_flag(
 
     try:    
         await set_flag(
+            redis_client,
             flag_key,
             payload.enabled,
             payload.rollout_percentage,
@@ -48,7 +51,7 @@ async def update_flag(
         await db.commit()
     except Exception:
         await db.rollback()
-        raise Inter
+        raise InternalError
     
     
     return {

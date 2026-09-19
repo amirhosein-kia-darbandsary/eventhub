@@ -164,3 +164,20 @@ async def partner_headers(db_session):
     db_session.add(partner)
     await db_session.flush()
     return {"X-API-Key": raw_key}
+
+
+class FakedRedisForFlags:
+    def __init__(self):
+        self._store = {}
+
+    async def hget(self, key, field):
+        return self._store[(key, field)]
+
+    async def hset(self, key, field, value):
+        self._store[(key, field)] = value.encode(
+        ) if isinstance(value, str) else value
+
+
+@pytest_asyncio.fixture
+async def fake_redis_client():
+    return FakedRedisForFlags()

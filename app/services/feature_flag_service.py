@@ -1,8 +1,6 @@
 import hashlib
 import json
 
-from app.core.cache import redis_client
-
 FLAGS_HASH_KEY = "feature_flags"
 
 
@@ -12,11 +10,11 @@ def _get_bucket(flag_key: str, user_id: str) -> int:
     return hash_value % 100
 
 
-async def is_enabled(flag_key: str, context: dict) -> bool:
+async def is_enabled(redis_client, flag_key: str, context: dict) -> bool:
 
     raw = await redis_client.hget(FLAGS_HASH_KEY, flag_key)
     if raw is None:
-        return False  
+        return False
 
     config = json.loads(raw)
     if not config.get("enabled", False):
@@ -28,11 +26,11 @@ async def is_enabled(flag_key: str, context: dict) -> bool:
 
     user_id = context.get("user_id")
     if user_id is None:
-        return False  
+        return False
 
     return _get_bucket(flag_key, str(user_id)) < rollout_percentage
 
 
-async def set_flag(flag_key: str, enabled: bool, rollout_percentage: int = 100) -> None:
+async def set_flag(redis_client, flag_key: str, enabled: bool = False, rollout_percentage: int = 100) -> None:
     config = {"enabled": enabled, "rollout_percentage": rollout_percentage}
     await redis_client.hset(FLAGS_HASH_KEY, flag_key, json.dumps(config))
