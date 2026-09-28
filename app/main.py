@@ -11,7 +11,7 @@ from app.api.webhook import webhook_router
 from app.api.checkout import checkout_router
 from app.api.reserve import reserve_router
 from app.api.ticket import ticket_router
-from app.api.event import event_router
+from app.api.event import event_router, event_router_v2
 from app.api.venue import venue_router
 from app.api.auth import auth_router
 from app.core.config import Settings, get_settings
@@ -71,6 +71,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(auth_router)
     app.include_router(venue_router)
     app.include_router(event_router)
+    app.include_router(event_router_v2)
     app.include_router(ticket_router)
     app.include_router(reserve_router)
     app.include_router(checkout_router)
