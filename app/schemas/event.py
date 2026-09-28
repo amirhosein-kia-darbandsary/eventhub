@@ -1,3 +1,5 @@
+from app.schemas.ticket import TicketTypeRead
+from app.schemas.venue import VenueRead
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field,  model_validator
@@ -39,9 +41,21 @@ class EventRead(BaseEvent):
     venue_id: int
 
 
+class PartnerEventRead(BaseEvent):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    status: EventStatus
+    vanue: VenueRead
+
+
 class EventUpdate(BaseModel):
     venue_id: int | None = None
     title: str | None = Field(default=None, min_length=1, max_length=255)
     starts_at: datetime | None = None
     ends_at: datetime | None = None
     status: EventStatus | None = None
+
+
+class EventDetailRead(EventRead):
+    venue: VenueRead
+    ticket_types: list[TicketTypeRead]

@@ -2,7 +2,7 @@
 
 
 from app.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, DateTime, Enum, ForeignKey, CheckConstraint
 from datetime import datetime
 import enum
@@ -26,4 +26,5 @@ class Event(Base):
     ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[EventStatus] = mapped_column(
         Enum(EventStatus), default=EventStatus.draft)
-
+    venue: Mapped["Venue"]  = relationship()
+    ticket_types: Mapped[list["TicketType"]] = relationship()
