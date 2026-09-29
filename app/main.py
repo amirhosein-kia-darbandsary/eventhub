@@ -28,7 +28,8 @@ from app.db.session import engine as db_engine
 from app.core.redis_client_ import redis_client
 from contextlib import asynccontextmanager
 from fastapi import HTTPException
-from sqlalchemy import text
+from sqlalchemy import text, event
+
 
 configure_logging(json_logs=not get_settings().debug)
 log = structlog.get_logger()
@@ -39,7 +40,24 @@ async def _update_pool_metrics_periodically():
     pool = db_engine.pool
     db_pool_checked_out.set(pool.checkedout())
     await asyncio.sleep(15)
-    
+
+query_count = {
+    "n": 0,
+}
+@event.listens_for(db_engine.sync_engine, "before_cursor_execute")
+def count_queries(
+    conn,
+    cursor,
+    statement,
+    parameters,
+    context,
+    executemany,
+):
+    query_count["n"] += 1
+
+    print(f"Query #{query_count['n']}")
+    print(statement)
+        
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start Secion
@@ -66,7 +84,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         debug=settings.debug,
         lifespan=lifespan
     )
-    configure_tracing(app)
+    # configure_tracing(app)
     register_exception_handlers(app)
     app.include_router(auth_router)
     app.include_router(venue_router)

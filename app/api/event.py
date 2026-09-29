@@ -72,8 +72,7 @@ async def list_events(
     limit: int = Query(default=20, ge=1, le=100),
     status: EventStatus = Query(default=EventStatus.published)
 ):
-    cache_key = f"events_with_details:list:cursor={cursor}:limit={limit}"
-
+    cache_key = f"events_with_details:list:status={status.value}:cursor={cursor}:limit={limit}"
     async def fetch_from_db():
         stmt = (
             select(Event)
