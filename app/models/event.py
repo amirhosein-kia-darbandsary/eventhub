@@ -3,7 +3,7 @@
 
 from app.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, DateTime, Enum, ForeignKey, CheckConstraint
+from sqlalchemy import String, DateTime, Enum, ForeignKey, CheckConstraint, Index
 from datetime import datetime
 import enum
 
@@ -16,8 +16,10 @@ class EventStatus(str, enum.Enum):
 
 class Event(Base):
     __tablename__ = "events"
-    __table_args__=(
-        CheckConstraint(sqltext="ends_at > starts_at", name="ck_events_end_after_start"),
+    __table_args__ = (
+        CheckConstraint(sqltext="ends_at > starts_at",
+                        name="ck_events_end_after_start"),
+        Index("ix_events_status_starts_at_id", "status", "starts_at", "id")
     )
     id: Mapped[int] = mapped_column(primary_key=True)
     venue_id: Mapped[int] = mapped_column(ForeignKey('venues.id'))
@@ -26,5 +28,5 @@ class Event(Base):
     ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[EventStatus] = mapped_column(
         Enum(EventStatus), default=EventStatus.draft)
-    venue: Mapped["Venue"]  = relationship()
+    venue: Mapped["Venue"] = relationship()
     ticket_types: Mapped[list["TicketType"]] = relationship()
