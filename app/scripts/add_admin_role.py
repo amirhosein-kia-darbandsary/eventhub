@@ -6,11 +6,11 @@ import asyncio
 async def assign_role_to_admin():
     async with async_session_factory.begin() as session:
         result = await session.execute(
-            select(User).order_by(User.id).limit(1)
+            select(User).order_by(User.created_at.desc()).limit(1)
         )
 
         user = result.scalar_one_or_none()
-
+        print(user)
         if user is None:
             print("No users found.")
             return

@@ -102,9 +102,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # inner middleware
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(SecurityHeadersMiddleware)
-    app.add_middleware(RedisRateLimitMiddleware,
-                       redis_client=redis_client,
-                       max_requests=10, window_seconds=60)
+    # app.add_middleware(RedisRateLimitMiddleware,
+    #                    redis_client=redis_client,
+    #                    max_requests=10, window_seconds=60)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors.allow_origins,

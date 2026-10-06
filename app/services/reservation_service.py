@@ -22,13 +22,13 @@ log = structlog.get_logger()
 DEFAULT_TTL_MINUTES = 15
 
 
-async def create_reservation_service(db: AsyncEngine,
+async def create_reservation_service(db: AsyncSession,
                                      ticket_type_id: int,
                                      quantity: int,
                                      user_id: uuid.UUID,
                                      idempotency_key: str | None = None) -> Reservation:
     if idempotency_key is not None:
-        existing = db.execute(select(Reservation).where(
+        existing = await db.execute(select(Reservation).where(
             Reservation.idempotency_key == idempotency_key))
         existing_reservation = existing.scalar_one_or_none()
 
