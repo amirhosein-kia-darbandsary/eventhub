@@ -6,7 +6,7 @@ from app.db.session import get_db
 from app.schemas.reserve import ReservationCreate, ReservationRead
 from fastapi import status, Depends, Header, Query
 from app.api.deps import get_current_user
-from app.services.reservation_service import create_reservation_service, cancel_reservation_service
+from app.services.reservation_service import create_reservation_service_v2, cancel_reservation_service
 from app.models.user import User
 from app.models.reserve import Reservation
 from sqlalchemy import select
@@ -20,7 +20,7 @@ async def create_reservation(payload: ReservationCreate,
                              user: User = Depends(get_current_user),
                              db: AsyncSession = Depends(get_db),
                              idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),):
-    result = await create_reservation_service(db=db,
+    result = await create_reservation_service_v2(db=db,
                                               ticket_type_id=payload.ticket_type_id,
                                               idempotency_key=idempotency_key,
                                               quantity=payload.quantity,

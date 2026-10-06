@@ -8,7 +8,7 @@ from app.exceptions.common import NotFoundError
 from app.db.session import get_db
 from app.models.ticket_type import TicketType
 from app.schemas.ticket import TicketTypeCreate, TicketTypeRead
-
+from app.core.redis_client_ import redis_client
 ticket_router = APIRouter(prefix="/ticket-types", tags=["ticket-types"])
 
 
@@ -22,6 +22,15 @@ async def create_ticket_type(
     db.add(ticket_type)
     await db.commit()
     await db.refresh(ticket_type)
+    available = (
+        ticket_type.total_quantity
+        - ticket_type.reserved_quantity
+        - ticket_type.sold_quantity
+    )
+    await redis_client.set(
+        f"ticket:{ticket_type.id}:stock",
+        available
+    )
     return ticket_type
 
 

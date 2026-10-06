@@ -1,3 +1,4 @@
+from pathlib import Path
 from app.exceptions.auth_exception import ForbiddenError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -79,6 +80,106 @@ async def create_reservation_service(db: AsyncSession,
         return existing.scalar_one()
 
     await db.refresh(reservation)
+    return reservation
+
+from pathlib import Path
+
+_LUA_SCRIPT_PATH = Path(__file__).parent.parent / "core/check_reservation.lua"
+
+redis_lua = redis_client.register_script(
+    _LUA_SCRIPT_PATH.read_text()
+)
+
+
+async def create_reservation_service_v2(
+    db: AsyncSession,
+    ticket_type_id: int,
+    quantity: int,
+    user_id: uuid.UUID,
+    idempotency_key: str | None = None,
+) -> Reservation:
+
+    # 1. Idempotency check
+    if idempotency_key is not None:
+        result = await db.execute(
+            select(Reservation).where(
+                Reservation.idempotency_key == idempotency_key
+            )
+        )
+
+        existing_reservation = result.scalar_one_or_none()
+
+        if existing_reservation is not None:
+            return existing_reservation
+
+    # 2. Redis atomic inventory reservation
+    stock_key = f"ticket:{ticket_type_id}:stock"
+
+    result = await redis_lua(
+        keys=[stock_key],
+        args=[quantity],
+    )
+
+    # Redis key doesn't exist
+    if result == -1:
+        raise NotFoundError("TicketType", ticket_type_id)
+
+    # Not enough inventory
+    if result == 0:
+        waitlist_active = await is_enabled(
+            redis_client,
+            "waitlist_enabled",
+            {"user_id": str(user_id)},
+        )
+
+        if waitlist_active:
+            raise ConflictError(
+                "Sold out, but you've been added to the waitlist"
+            )
+
+        raise ConflictError(
+            f"Not enough tickets available (requested {quantity})"
+        )
+
+    # 3. Create reservation in PostgreSQL
+    reservation = Reservation(
+        user_id=user_id,
+        ticket_type_id=ticket_type_id,
+        quantity=quantity,
+        idempotency_key=idempotency_key,
+        status=ReservationStatus.pending,
+        expires_at=(
+            datetime.now(timezone.utc)
+            + timedelta(minutes=DEFAULT_TTL_MINUTES)
+        ),
+    )
+
+    db.add(reservation)
+
+    try:
+        await db.commit()
+
+    except IntegrityError:
+        await db.rollback()
+
+        # PostgreSQL failed after Redis inventory was reserved.
+        # Restore the inventory.
+        await redis_client.incrby(
+            stock_key,
+            quantity,
+        )
+
+        if idempotency_key is None:
+            raise
+
+        result = await db.execute(
+            select(Reservation).where(
+                Reservation.idempotency_key == idempotency_key
+            )
+        )
+
+        return result.scalar_one()
+
     return reservation
 
 

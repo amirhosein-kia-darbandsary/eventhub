@@ -8,9 +8,9 @@ export const options = {
       startVUs: 0,
       stages: [
         { duration: "10s", target: 50 },   // شروع آروم: به ۵۰ کاربر برسه
-        // { duration: "20s", target: 200 },  // جهش ناگهانی: شبیه‌سازی "فروش آغاز شد"
-        // { duration: "30s", target: 200 },  // نگه‌داشتن فشار بالا
-        // { duration: "10s", target: 0 },    // فروکش
+        { duration: "20s", target: 200 },  // جهش ناگهانی: شبیه‌سازی "فروش آغاز شد"
+        { duration: "30s", target: 200 },  // نگه‌داشتن فشار بالا
+        { duration: "10s", target: 0 },    // فروکش
       ],
     },
   },
