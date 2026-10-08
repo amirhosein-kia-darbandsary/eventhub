@@ -1,11 +1,72 @@
 services:
+
   api:
     build:
       context: .
-      dockerfile: docker/api.DockerFile
+      dockerfile: docker/api.Dockerfile
+
+    container_name: eventhub-api
+
     ports:
       - "8000:8000"
+
     env_file:
       - .env
-    volumes:
-      - ./app:/app/app
+
+    restart: unless-stopped
+
+    networks:
+      - eventhub
+
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+
+    container_name: eventhub-worker
+
+    command:
+      [
+        "dramatiq",
+        "app.workers.worker",
+        "--processes",
+        "4",
+        "--threads",
+        "1"
+      ]
+
+    env_file:
+      - .env
+
+    
+    restart: unless-stopped
+
+    networks:
+      - eventhub
+
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+
+    container_name: eventhub-scheduler
+
+    command:
+      [
+        "periodiq",
+        "app.workers.worker"
+      ]
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
+
+    networks:
+      - eventhub
+
+networks:
+  eventhub:
+    driver: bridge
